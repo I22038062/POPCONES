@@ -1,0 +1,3348 @@
+Microsoft (R) Macro Assembler Version 14.42.34435.0	    12/30/24 02:47:22
+levelstage.asm						     Page 1 - 1
+
+
+				include Irvine32.inc
+			      C ; Include file for Irvine32.lib             (Irvine32.inc)
+			      C 
+			      C ;OPTION CASEMAP:NONE		; optional: make identifiers case-sensitive
+			      C 
+			      C INCLUDE SmallWin.inc		; MS-Windows prototypes, structures, and constants
+			      C .NOLIST
+			      C .LIST
+			      C 
+			      C INCLUDE VirtualKeys.inc
+			      C ; VirtualKeys.inc
+			      C .NOLIST
+			      C .LIST
+			      C 
+			      C 
+			      C .NOLIST
+			      C .LIST
+			      C 
+
+				;新增inc和lib檔，用來撥放音樂
+				include winmm.inc
+			      C ; --------------------------------------------------------------------------------------------------
+			      C ;                            winmm.inc Copyright The MASM32 SDK 1998-2010
+			      C ; --------------------------------------------------------------------------------------------------
+			      C 
+			      C IFNDEF WINMM_INC
+ = 1			      C WINMM_INC equ <1>
+			      C 
+			      C CloseDriver PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C DefDriverProc PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C DriverCallback PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C DrvGetModuleHandle PROTO STDCALL :DWORD
+			      C GetDriverModuleHandle PROTO STDCALL :DWORD
+			      C MigrateAllDrivers PROTO STDCALL
+			      C MigrateSoundEvents PROTO STDCALL
+			      C NotifyCallbackData PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C OpenDriver PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C 
+			      C PlaySoundA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = PlaySoundA		      C   PlaySound equ <PlaySoundA>
+			      C ENDIF
+			      C 
+			      C PlaySoundW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C SendDriverMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C WOW32DriverCallback PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C WOW32ResolveMultiMediaHandle PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C WOWAppExit PROTO STDCALL :DWORD
+			      C WinmmLogoff PROTO STDCALL
+			      C WinmmLogon PROTO STDCALL :DWORD
+			      C aux32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C 
+			      C auxGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = auxGetDevCapsA	      C   auxGetDevCaps equ <auxGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C auxGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C auxGetNumDevs PROTO STDCALL
+			      C auxGetVolume PROTO STDCALL :DWORD,:DWORD
+			      C auxOutMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C auxSetVolume PROTO STDCALL :DWORD,:DWORD
+			      C gfxAddGfx PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C gfxBatchChange PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C gfxCreateGfxFactoriesList PROTO STDCALL :DWORD,:DWORD
+			      C gfxCreateZoneFactoriesList PROTO STDCALL :DWORD
+			      C gfxDestroyDeviceInterfaceList PROTO STDCALL :DWORD
+			      C gfxEnumerateGfxs PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C gfxLogoff PROTO STDCALL
+			      C gfxLogon PROTO STDCALL :DWORD
+			      C gfxModifyGfx PROTO STDCALL :DWORD,:DWORD
+			      C gfxOpenGfx PROTO STDCALL :DWORD,:DWORD
+			      C gfxRemoveGfx PROTO STDCALL :DWORD
+			      C joy32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C joyConfigChanged PROTO STDCALL :DWORD
+			      C 
+			      C joyGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = joyGetDevCapsA	      C   joyGetDevCaps equ <joyGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C joyGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C joyGetNumDevs PROTO STDCALL
+			      C joyGetPos PROTO STDCALL :DWORD,:DWORD
+			      C joyGetPosEx PROTO STDCALL :DWORD,:DWORD
+			      C joyGetThreshold PROTO STDCALL :DWORD,:DWORD
+			      C joyReleaseCapture PROTO STDCALL :DWORD
+			      C joySetCapture PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C joySetThreshold PROTO STDCALL :DWORD,:DWORD
+			      C mci32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C mciDriverNotify PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mciDriverYield PROTO STDCALL :DWORD
+			      C mciExecute PROTO STDCALL :DWORD
+			      C mciFreeCommandResource PROTO STDCALL :DWORD
+			      C mciGetCreatorTask PROTO STDCALL :DWORD
+			      C 
+			      C mciGetDeviceIDA PROTO STDCALL :DWORD
+			      C IFNDEF __UNICODE__
+ = mciGetDeviceIDA	      C   mciGetDeviceID equ <mciGetDeviceIDA>
+			      C ENDIF
+			      C 
+			      C mciGetDeviceIDFromElementIDA PROTO STDCALL :DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mciGetDeviceIDFromElemen   C   mciGetDeviceIDFromElementID equ <mciGetDeviceIDFromElementIDA>
+   tIDA
+			      C ENDIF
+			      C 
+			      C mciGetDeviceIDFromElementIDW PROTO STDCALL :DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mciGetDeviceIDW PROTO STDCALL :DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mciGetDriverData PROTO STDCALL :DWORD
+			      C 
+			      C mciGetErrorStringA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mciGetErrorStringA	      C   mciGetErrorString equ <mciGetErrorStringA>
+			      C ENDIF
+			      C 
+			      C mciGetErrorStringW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mciGetYieldProc PROTO STDCALL :DWORD,:DWORD
+			      C mciLoadCommandResource PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C 
+			      C mciSendCommandA PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mciSendCommandA	      C   mciSendCommand equ <mciSendCommandA>
+			      C ENDIF
+			      C 
+			      C mciSendCommandW PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mciSendStringA PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mciSendStringA	      C   mciSendString equ <mciSendStringA>
+			      C ENDIF
+			      C 
+			      C mciSendStringW PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mciSetDriverData PROTO STDCALL :DWORD,:DWORD
+			      C mciSetYieldProc PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mid32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C midiConnect PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiDisconnect PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiInAddBuffer PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiInClose PROTO STDCALL :DWORD
+			      C 
+			      C midiInGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = midiInGetDevCapsA	      C   midiInGetDevCaps equ <midiInGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C midiInGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C midiInGetErrorTextA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = midiInGetErrorTextA	      C   midiInGetErrorText equ <midiInGetErrorTextA>
+			      C ENDIF
+			      C 
+			      C midiInGetErrorTextW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C midiInGetID PROTO STDCALL :DWORD,:DWORD
+			      C midiInGetNumDevs PROTO STDCALL
+			      C midiInMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C midiInOpen PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C midiInPrepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiInReset PROTO STDCALL :DWORD
+			      C midiInStart PROTO STDCALL :DWORD
+			      C midiInStop PROTO STDCALL :DWORD
+			      C midiInUnprepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiOutCacheDrumPatches PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C midiOutCachePatches PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C midiOutClose PROTO STDCALL :DWORD
+			      C 
+			      C midiOutGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = midiOutGetDevCapsA	      C   midiOutGetDevCaps equ <midiOutGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C midiOutGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C midiOutGetErrorTextA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = midiOutGetErrorTextA	      C   midiOutGetErrorText equ <midiOutGetErrorTextA>
+			      C ENDIF
+			      C 
+			      C midiOutGetErrorTextW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C midiOutGetID PROTO STDCALL :DWORD,:DWORD
+			      C midiOutGetNumDevs PROTO STDCALL
+			      C midiOutGetVolume PROTO STDCALL :DWORD,:DWORD
+			      C midiOutLongMsg PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiOutMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C midiOutOpen PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C midiOutPrepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiOutReset PROTO STDCALL :DWORD
+			      C midiOutSetVolume PROTO STDCALL :DWORD,:DWORD
+			      C midiOutShortMsg PROTO STDCALL :DWORD,:DWORD
+			      C midiOutUnprepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiStreamClose PROTO STDCALL :DWORD
+			      C midiStreamOpen PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C midiStreamOut PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiStreamPause PROTO STDCALL :DWORD
+			      C midiStreamPosition PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiStreamProperty PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C midiStreamRestart PROTO STDCALL :DWORD
+			      C midiStreamStop PROTO STDCALL :DWORD
+			      C mixerClose PROTO STDCALL :DWORD
+			      C 
+			      C mixerGetControlDetailsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mixerGetControlDetailsA    C   mixerGetControlDetails equ <mixerGetControlDetailsA>
+			      C ENDIF
+			      C 
+			      C mixerGetControlDetailsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mixerGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mixerGetDevCapsA	      C   mixerGetDevCaps equ <mixerGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C mixerGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mixerGetID PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C 
+			      C mixerGetLineControlsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mixerGetLineControlsA      C   mixerGetLineControls equ <mixerGetLineControlsA>
+			      C ENDIF
+			      C 
+			      C mixerGetLineControlsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mixerGetLineInfoA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mixerGetLineInfoA	      C   mixerGetLineInfo equ <mixerGetLineInfoA>
+			      C ENDIF
+			      C 
+			      C mixerGetLineInfoW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mixerGetNumDevs PROTO STDCALL
+			      C mixerMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C mixerOpen PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C mixerSetControlDetails PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmDrvInstall PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C mmGetCurrentTask PROTO STDCALL
+			      C mmTaskBlock PROTO STDCALL :DWORD
+			      C mmTaskCreate PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmTaskSignal PROTO STDCALL :DWORD
+			      C mmTaskYield PROTO STDCALL
+			      C mmioAdvance PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmioAscend PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmioClose PROTO STDCALL :DWORD,:DWORD
+			      C mmioCreateChunk PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmioDescend PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C mmioFlush PROTO STDCALL :DWORD,:DWORD
+			      C mmioGetInfo PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C 
+			      C mmioInstallIOProcA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mmioInstallIOProcA	      C   mmioInstallIOProc equ <mmioInstallIOProcA>
+			      C ENDIF
+			      C 
+			      C mmioInstallIOProcW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mmioOpenA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mmioOpenA		      C   mmioOpen equ <mmioOpenA>
+			      C ENDIF
+			      C 
+			      C mmioOpenW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mmioRead PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C 
+			      C mmioRenameA PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mmioRenameA		      C   mmioRename equ <mmioRenameA>
+			      C ENDIF
+			      C 
+			      C mmioRenameW PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mmioSeek PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmioSendMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C mmioSetBuffer PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C mmioSetInfo PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C 
+			      C mmioStringToFOURCCA PROTO STDCALL :DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = mmioStringToFOURCCA	      C   mmioStringToFOURCC equ <mmioStringToFOURCCA>
+			      C ENDIF
+			      C 
+			      C mmioStringToFOURCCW PROTO STDCALL :DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C mmioWrite PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C mmsystemGetVersion PROTO STDCALL
+			      C mod32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C mxd32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C 
+			      C sndPlaySoundA PROTO STDCALL :DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = sndPlaySoundA	      C   sndPlaySound equ <sndPlaySoundA>
+			      C ENDIF
+			      C 
+			      C sndPlaySoundW PROTO STDCALL :DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C tid32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C timeBeginPeriod PROTO STDCALL :DWORD
+			      C timeEndPeriod PROTO STDCALL :DWORD
+			      C timeGetDevCaps PROTO STDCALL :DWORD,:DWORD
+			      C timeGetSystemTime PROTO STDCALL :DWORD,:DWORD
+			      C timeGetTime PROTO STDCALL
+			      C timeKillEvent PROTO STDCALL :DWORD
+			      C timeSetEvent PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C waveInAddBuffer PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveInClose PROTO STDCALL :DWORD
+			      C 
+			      C waveInGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = waveInGetDevCapsA	      C   waveInGetDevCaps equ <waveInGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C waveInGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C waveInGetErrorTextA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = waveInGetErrorTextA	      C   waveInGetErrorText equ <waveInGetErrorTextA>
+			      C ENDIF
+			      C 
+			      C waveInGetErrorTextW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C waveInGetID PROTO STDCALL :DWORD,:DWORD
+			      C waveInGetNumDevs PROTO STDCALL
+			      C waveInGetPosition PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveInMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C waveInOpen PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C waveInPrepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveInReset PROTO STDCALL :DWORD
+			      C waveInStart PROTO STDCALL :DWORD
+			      C waveInStop PROTO STDCALL :DWORD
+			      C waveInUnprepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveOutBreakLoop PROTO STDCALL :DWORD
+			      C waveOutClose PROTO STDCALL :DWORD
+			      C 
+			      C waveOutGetDevCapsA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = waveOutGetDevCapsA	      C   waveOutGetDevCaps equ <waveOutGetDevCapsA>
+			      C ENDIF
+			      C 
+			      C waveOutGetDevCapsW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C waveOutGetErrorTextA PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFNDEF __UNICODE__
+ = waveOutGetErrorTextA	      C   waveOutGetErrorText equ <waveOutGetErrorTextA>
+			      C ENDIF
+			      C 
+			      C waveOutGetErrorTextW PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C IFDEF __UNICODE__
+			      C ENDIF
+			      C 
+			      C waveOutGetID PROTO STDCALL :DWORD,:DWORD
+			      C waveOutGetNumDevs PROTO STDCALL
+			      C waveOutGetPitch PROTO STDCALL :DWORD,:DWORD
+			      C waveOutGetPlaybackRate PROTO STDCALL :DWORD,:DWORD
+			      C waveOutGetPosition PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveOutGetVolume PROTO STDCALL :DWORD,:DWORD
+			      C waveOutMessage PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD
+			      C waveOutOpen PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C waveOutPause PROTO STDCALL :DWORD
+			      C waveOutPrepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveOutReset PROTO STDCALL :DWORD
+			      C waveOutRestart PROTO STDCALL :DWORD
+			      C waveOutSetPitch PROTO STDCALL :DWORD,:DWORD
+			      C waveOutSetPlaybackRate PROTO STDCALL :DWORD,:DWORD
+			      C waveOutSetVolume PROTO STDCALL :DWORD,:DWORD
+			      C waveOutUnprepareHeader PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C waveOutWrite PROTO STDCALL :DWORD,:DWORD,:DWORD
+			      C wid32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C winmmDbgOut PROTO C :VARARG
+			      C winmmSetDebugLevel PROTO STDCALL :DWORD
+			      C wod32Message PROTO STDCALL :DWORD,:DWORD,:DWORD,:DWORD,:DWORD
+			      C 
+			      C ELSE
+			      C ENDIF
+			      C 
+				includelib winmm.lib	
+				includelib Kernel32.lib
+
+				EXTERN main@0:PROC
+				EXTERN game1@0:PROC
+				EXTERN levelNum:BYTE
+ 00000000			.data
+ 00000000 00000000		consoleHandle DWORD ?
+ 00000004 00000000		cellsWritten DWORD ?
+ 00000008 00000000		bytesWritten DWORD 0
+ 0000000C 00000001		CursorInfo CONSOLE_CURSOR_INFO <1,0>
+	   00000000
+
+ 00000014 00			boolEnd BYTE 0		;0:keep,1:end
+
+				;關卡1預覽圖
+ 00000015 20 20 20 20 20	stage1row1 BYTE "      ------------------------------------------------------------------------------------------------------------      "
+	   20 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 20
+	   20 20 20 20 20
+ 0000008D 20 20 20 20 20	stage1row2 BYTE "      |                                                                                                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000105 20 20 20 20 20	stage1row3 BYTE "      |                                                                                                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000017D 20 20 20 20 20	stage1row4 BYTE "      |                                                                                                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000001F5 20 20 20 20 20	stage1row5 BYTE "      |                                                                                                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000026D 20 20 20 20 20	stage1row6 BYTE "      |                                                          OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000002E5 20 20 20 20 20	stage1row7 BYTE "      |                                                          OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000035D 20 20 20 20 20	stage1row8 BYTE "      |                                                          OOOOOOOOO   OOO    OOO    OO    OO   OOOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 20
+	   20 20 4F 4F 4F
+	   20 20 20 20 4F
+	   4F 4F 20 20 20
+	   20 4F 4F 20 20
+	   20 20 4F 4F 20
+	   20 20 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000003D5 20 20 20 20 20	stage1row9 BYTE "      |                                                          OOOOOOOO OOOOOO OOO OO OOOOO OOOOO OO OOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 20 4F
+	   4F 4F 4F 4F 4F
+	   20 4F 4F 4F 20
+	   4F 4F 20 4F 4F
+	   4F 4F 4F 20 4F
+	   4F 4F 4F 4F 20
+	   4F 4F 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000044D 20 20 20 20 20	stage1row10 BYTE "      |                                                          OOOOOOOOO   OOO    OOO   OOO   OOO OO OOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 20
+	   20 20 4F 4F 4F
+	   20 20 20 20 4F
+	   4F 4F 20 20 20
+	   4F 4F 4F 20 20
+	   20 4F 4F 4F 20
+	   4F 4F 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000004C5 20 20 20 20 20	stage1row11 BYTE "      |                                                          OOOOOOOOOOOO OO OOOOOO OOOOO OOOOO OO OOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 20 4F 4F
+	   20 4F 4F 4F 4F
+	   4F 4F 20 4F 4F
+	   4F 4F 4F 20 4F
+	   4F 4F 4F 4F 20
+	   4F 4F 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000053D 20 20 20 20 20	stage1row12 BYTE "      |           |\=.                                           OOOOOOOO    OOO OOOOOO    OO    OO   OOOOOOO0   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 5C
+	   3D 2E 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 20 20
+	   20 20 4F 4F 4F
+	   20 4F 4F 4F 4F
+	   4F 4F 20 20 20
+	   20 4F 4F 20 20
+	   20 20 4F 4F 20
+	   20 20 4F 4F 4F
+	   4F 4F 4F 4F 30
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000005B5 20 20 20 20 20	stage1row13 BYTE "      |           /  6',                                         OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 2F 20
+	   20 36 27 2C 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000062D 20 20 20 20 20	stage1row14 BYTE "      |   .--.    \  .-'                                         OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO   |   >  "
+	   20 7C 20 20 20
+	   2E 2D 2D 2E 20
+	   20 20 20 5C 20
+	   20 2E 2D 27 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 3E 20 20
+ 000006A5 20 20 20 20 20	stage1row15 BYTE "      |  /_   \   /  (                                           OOOOO                                   OOOOO   |      "
+	   20 7C 20 20 2F
+	   5F 20 20 20 5C
+	   20 20 20 2F 20
+	   20 28 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000071D 20 20 20 20 20	stage1row16 BYTE "      |    )   | / `;\\                                          OOOOO         OOOOOOO  OOOOOOOO         OOOOO   |      "
+	   20 7C 20 20 20
+	   20 29 20 20 20
+	   7C 20 2F 20 60
+	   3B 5C 5C 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 4F
+	   4F 4F 4F 4F 4F
+	   4F 20 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000795 20 20 20 20 20	stage1row17 BYTE "      |   /   / /   ( ``                                         OOOOO        OO     OO OO               OOOOO   |      "
+	   20 7C 20 20 20
+	   2F 20 20 20 2F
+	   20 2F 20 20 20
+	   28 20 60 60 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   20 20 20 20 20
+	   4F 4F 20 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000080D 20 20 20 20 20	stage1row18 BYTE "      |  (    `'    _)_                                          OOOOO               OO OO               OOOOO   |      "
+	   20 7C 20 20 28
+	   20 20 20 20 60
+	   27 20 20 20 20
+	   5F 29 5F 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 20 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000885 20 20 20 20 20	stage1row19 BYTE "      |   `-==-'`""""""`                                            OOOOO         OOOOOOO  OOOOOOO          OOOOO   |   "
+	   20 7C 20 20 20
+	   60 2D 3D 3D 2D
+	   27 60 22 22 22
+	   60 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 4F
+	   4F 4F 4F 4F 4F
+	   4F 20 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20
+ 000008FA 20 20 20 20 20	stage1row20 BYTE "      |                                                          OOOOO        OO              OO         OOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 4F
+	   4F 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000972 20 20 20 20 20	stage1row21 BYTE "      |                                                          OOOOO        OO        OO    OO         OOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   20 20 20 20 4F
+	   4F 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000009EA 20 20 20 20 20	stage1row22 BYTE "      |                                                          OOOOO        OOOOOOOOO  OOOOOO          OOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 20 20 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000A62 20 20 20 20 20	stage1row23 BYTE "      |                                                          OOOOO                                   OOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000ADA 20 20 20 20 20	stage1row24 BYTE "      |                                                          OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000B52 20 20 20 20 20	stage1row25 BYTE "      |                                                          OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO   |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000BCA 20 20 20 20 20	stage1row26 BYTE "      |                                                                                                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000C42 20 20 20 20 20	stage1row27 BYTE "      ------------------------------------------------------------------------------------------------------------      "
+	   20 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 20
+	   20 20 20 20 20
+ 00000CBA 20 20 20 20 20	stage1row28 BYTE "                                                                                                                        "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+ 00000D32 20 20 20 20 20	stage1row29 BYTE "                                                        STAGE 1                                                         "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 53 54 41 47
+	   45 20 31 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+ 00000DAA 20 20 20 20 20	stage1row30 BYTE "                                                                                                                        "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+
+ 00000E22 0000 0000		stage1row1Pos COORD <0,0>
+ 00000E26 0000 0001		stage1row2Pos COORD <0,1>
+ 00000E2A 0000 0002		stage1row3Pos COORD <0,2>
+ 00000E2E 0000 0003		stage1row4Pos COORD <0,3>
+ 00000E32 0000 0004		stage1row5Pos COORD <0,4>
+ 00000E36 0000 0005		stage1row6Pos COORD <0,5>
+ 00000E3A 0000 0006		stage1row7Pos COORD <0,6>
+ 00000E3E 0000 0007		stage1row8Pos COORD <0,7>
+ 00000E42 0000 0008		stage1row9Pos COORD <0,8>
+ 00000E46 0000 0009		stage1row10Pos COORD <0,9>
+ 00000E4A 0000 000A		stage1row11Pos COORD <0,10>
+ 00000E4E 0000 000B		stage1row12Pos COORD <0,11>
+ 00000E52 0000 000C		stage1row13Pos COORD <0,12>
+ 00000E56 0000 000D		stage1row14Pos COORD <0,13>
+ 00000E5A 0000 000E		stage1row15Pos COORD <0,14>
+ 00000E5E 0000 000F		stage1row16Pos COORD <0,15>
+ 00000E62 0000 0010		stage1row17Pos COORD <0,16>
+ 00000E66 0000 0011		stage1row18Pos COORD <0,17>
+ 00000E6A 0000 0012		stage1row19Pos COORD <0,18>
+ 00000E6E 0000 0013		stage1row20Pos COORD <0,19>
+ 00000E72 0000 0014		stage1row21Pos COORD <0,20>
+ 00000E76 0000 0015		stage1row22Pos COORD <0,21>
+ 00000E7A 0000 0016		stage1row23Pos COORD <0,22>
+ 00000E7E 0000 0017		stage1row24Pos COORD <0,23>
+ 00000E82 0000 0018		stage1row25Pos COORD <0,24>
+ 00000E86 0000 0019		stage1row26Pos COORD <0,25>
+ 00000E8A 0000 001A		stage1row27Pos COORD <0,26>
+ 00000E8E 0000 001B		stage1row28Pos COORD <0,27>
+ 00000E92 0000 001C		stage1row29Pos COORD <0,28>
+ 00000E96 0000 001D		stage1row30Pos COORD <0,29>
+
+				;關卡2預覽圖
+ 00000E9A 20 20 20 20 20	stage2row1 BYTE "      ------------------------------------------------------------------------------------------------------------      "
+	   20 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 20
+	   20 20 20 20 20
+ 00000F12 20 20 20 20 20	stage2row2 BYTE "      |                                                          .OOOOOOOOOOOOO.                                 |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   2E 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 2E
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00000F8A 20 20 20 20 20	stage2row3 BYTE "      |                                                       .OOOOOOOOOOOOOOOOOOO.                              |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 2E 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 2E 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00001002 20 20 20 20 20	stage2row4 BYTE "      |                                                    .OOOOOOOOOOOOOOOOOOOOOOOOO.                           |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 2E
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   2E 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000107A 20 20 20 20 20	stage2row5 BYTE "      |                                                   .OOOOOOOOOOOOOOOOOOOOOOOOOOO.                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 2E 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 2E 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000010F2 20 20 20 20 20	stage2row6 BYTE "      |                                                  .OOOOOOOOOOOOOOOOOOOOOOOOOOOOO.                         |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 2E 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 2E 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000116A 20 20 20 20 20	stage2row7 BYTE "      |                                                  .OOOOOOOOOOOOOO!OOOOOOOOOOOOOO.                         |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 2E 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 21 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 2E 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000011E2 20 20 20 20 20	stage2row8 BYTE "      |                                                   OOOOOOOOOOOOOOOOOOOOOOOOOOOOO                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000125A 20 20 20 20 20	stage2row9 BYTE "      |                                                   OOOOOOOOOOOOOOOOOOOOOOOOOOOOO                          |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000012D2 20 20 20 20 20	stage2row10 BYTE "      |                                                   `OOOOOOOOOOOOOOOOOOOOOOOOOOO                           |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 60 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000134A 20 20 20 20 20	stage2row11 BYTE "      |                                                     `OOOOOOOOOOOOOOOOOOOOOOO'                            |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   60 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 27
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000013C2 20 20 20 20 20	stage2row12 BYTE "      |           |\=.                                        `OOOOOOOOOOOOOOOOOO'  OOOOOOOOOOOO,                |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 5C
+	   3D 2E 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 60 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 27 20 20 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 2C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000143A 20 20 20 20 20	stage2row13 BYTE "      |           /  6',                                         `OOOOOOOOOOOOO'.OOOOOOOOOOOOOOOOOO,             |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 2F 20
+	   20 36 27 2C 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   60 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 27
+	   2E 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 2C
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000014B2 20 20 3C 20 20	stage2row14 BYTE "  <   |   .--.    \  .-'                                           `OOOOOOOOO'OOOOOOOOOOOOOOOOOOOOOOOO,          |      "
+	   20 7C 20 20 20
+	   2E 2D 2D 2E 20
+	   20 20 20 5C 20
+	   20 2E 2D 27 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 60 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 27 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 2C 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000152A 20 20 20 20 20	stage2row15 BYTE "      |  /_   \   /  (                                               `OOOOO'.OOOOOOOOOOOOOOOOOOOOOOOOOO,         |      "
+	   20 7C 20 20 2F
+	   5F 20 20 20 5C
+	   20 20 20 2F 20
+	   20 28 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 60
+	   4F 4F 4F 4F 4F
+	   27 2E 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 2C 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000015A2 20 20 20 20 20	stage2row16 BYTE "      |    )   | / `;\\                                                `OO' OOOOOOOOOOOOOOOOOOOOOOOOOOOO         |      "
+	   20 7C 20 20 20
+	   20 29 20 20 20
+	   7C 20 2F 20 60
+	   3B 5C 5C 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 60 4F 4F 27
+	   20 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000161A 20 20 20 20 20	stage2row17 BYTE "      |   /   / /   ( ``                                               OOO  OOOOOOOOOOOOOO!OOOOOOOOOOOOO         |      "
+	   20 7C 20 20 20
+	   2F 20 20 20 2F
+	   20 2F 20 20 20
+	   28 20 60 60 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 4F 4F 4F 20
+	   20 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   21 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00001692 20 20 20 20 20	stage2row18 BYTE "      |  (    `'    _)_                                                 '   OOOOOOOOOOOOOOOOOOOOOOOOOOOO         |      "
+	   20 7C 20 20 28
+	   20 20 20 20 60
+	   27 20 20 20 20
+	   5F 29 5F 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 27 20 20
+	   20 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000170A 20 20 20 20 20	stage2row19 BYTE "      |   `-==-'`""""""`                                                  '    `OOOOOOOOOOOOOOOOOOOOOOOOOO'         |   "
+	   20 7C 20 20 20
+	   60 2D 3D 3D 2D
+	   27 60 22 22 22
+	   60 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 27 20 20 20
+	   20 60 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 27 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20
+ 0000177F 20 20 20 20 20	stage2row20 BYTE "      |                                                               '       `OOOOOOOOOOOOOOOOOOOOOO'           |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   27 20 20 20 20
+	   20 20 20 60 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 27 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000017F7 20 20 20 20 20	stage2row21 BYTE "      |                                                               `         `OOOOOOOOOOOOOOOOOO'             |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   60 20 20 20 20
+	   20 20 20 20 20
+	   60 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 27
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000186F 20 20 20 20 20	stage2row22 BYTE "      |                                                                `          `OOOOOOOOOOOOOO'               |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 60 20 20 20
+	   20 20 20 20 20
+	   20 20 60 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 4F 27 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000018E7 20 20 20 20 20	stage2row23 BYTE "      |                                                                  `           `OOOOOOOOOO'                |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 60 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   60 4F 4F 4F 4F
+	   4F 4F 4F 4F 4F
+	   4F 27 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 0000195F 20 20 20 20 20	stage2row24 BYTE "      |                                                                   '            `OOOOOO'                  |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 27
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 60 4F 4F
+	   4F 4F 4F 4F 27
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 000019D7 20 20 20 20 20	stage2row25 BYTE "      |                                                                  '              `OOO'                    |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 27 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 60 4F
+	   4F 4F 27 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00001A4F 20 20 20 20 20	stage2row26 BYTE "      |                                                                                 .OO                      |      "
+	   20 7C 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 2E 4F
+	   4F 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 7C 20
+	   20 20 20 20 20
+ 00001AC7 20 20 20 20 20	stage2row27 BYTE "      ------------------------------------------------------------------------------------------------------------      "
+	   20 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 2D
+	   2D 2D 2D 2D 20
+	   20 20 20 20 20
+ 00001B3F 20 20 20 20 20	stage2row28 BYTE "                                                                                                                        "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+ 00001BB7 20 20 20 20 20	stage2row29 BYTE "                                                        STAGE 2                                                         "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 53 54 41 47
+	   45 20 32 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+ 00001C2F 20 20 20 20 20	stage2row30 BYTE "                                                                                                                        "
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+	   20 20 20 20 20
+
+ 00001CA7 0078 0000		stage2row1Pos COORD <120,0>
+ 00001CAB 0078 0001		stage2row2Pos COORD <120,1>
+ 00001CAF 0078 0002		stage2row3Pos COORD <120,2>
+ 00001CB3 0078 0003		stage2row4Pos COORD <120,3>
+ 00001CB7 0078 0004		stage2row5Pos COORD <120,4>
+ 00001CBB 0078 0005		stage2row6Pos COORD <120,5>
+ 00001CBF 0078 0006		stage2row7Pos COORD <120,6>
+ 00001CC3 0078 0007		stage2row8Pos COORD <120,7>
+ 00001CC7 0078 0008		stage2row9Pos COORD <120,8>
+ 00001CCB 0078 0009		stage2row10Pos COORD <120,9>
+ 00001CCF 0078 000A		stage2row11Pos COORD <120,10>
+ 00001CD3 0078 000B		stage2row12Pos COORD <120,11>
+ 00001CD7 0078 000C		stage2row13Pos COORD <120,12>
+ 00001CDB 0078 000D		stage2row14Pos COORD <120,13>
+ 00001CDF 0078 000E		stage2row15Pos COORD <120,14>
+ 00001CE3 0078 000F		stage2row16Pos COORD <120,15>
+ 00001CE7 0078 0010		stage2row17Pos COORD <120,16>
+ 00001CEB 0078 0011		stage2row18Pos COORD <120,17>
+ 00001CEF 0078 0012		stage2row19Pos COORD <120,18>
+ 00001CF3 0078 0013		stage2row20Pos COORD <120,19>
+ 00001CF7 0078 0014		stage2row21Pos COORD <120,20>
+ 00001CFB 0078 0015		stage2row22Pos COORD <120,21>
+ 00001CFF 0078 0016		stage2row23Pos COORD <120,22>
+ 00001D03 0078 0017		stage2row24Pos COORD <120,23>
+ 00001D07 0078 0018		stage2row25Pos COORD <120,24>
+ 00001D0B 0078 0019		stage2row26Pos COORD <120,25>
+ 00001D0F 0078 001A		stage2row27Pos COORD <120,26>
+ 00001D13 0078 001B		stage2row28Pos COORD <120,27>
+ 00001D17 0078 001C		stage2row29Pos COORD <120,28>
+ 00001D1B 0078 001D		stage2row30Pos COORD <120,29>
+
+
+				;用於繪製選關動畫
+ 00001D1F 00			stage1rowLength BYTE 0
+ 00001D20 00			stage2rowLength BYTE 0
+ 00001D21 00000078		stage1rowOffset DWORD 120	;記憶體位址偏移量
+
+ 00001D25 00			selectbool BYTE 0	;用於判斷是否繪製選關動畫
+ 00001D26 01			selectstage BYTE 1	;選擇的關卡
+
+				;用於playsoundA的參數，規範音樂的撥放模式
+ 00001D27 00000001		SND_ASYNC DWORD 0001h			;同步撥放，函式會等撥放完後滿回
+ 00001D2B 00000008		SND_LOOP DWORD 0008h			;循環撥放
+ 00001D2F 00020011		SND_NOSTOP DWORD 20011h			;目前有音樂撥放時，不會打斷目前的音樂
+ 00001D33 00000009		SND_LOOP_ASYNC DWORD 0009h		;同步 + 循環撥放
+
+				;音效(使用相對路徑，檔案放置於與exe檔同個位置)
+ 00001D37 6C 65 76 65 6C	level_switch BYTE "level_switch.wav",0
+	   5F 73 77 69 74
+	   63 68 2E 77 61
+	   76 00
+ 00001D48 6C 65 76 65 6C	level_choose BYTE "level_choose.wav",0
+	   5F 63 68 6F 6F
+	   73 65 2E 77 61
+	   76 00
+
+				;用於mcisendstring的參數，規範音樂的撥放模式
+				;背景音效(使用絕對位置，檔案放置於C槽)
+ 00001D59 6F 70 65 6E 20	stage_cd BYTE "open C:\asm_music_project\menu.wav type waveaudio alias stage_music", 0		;打開音檔的指令，將音檔名稱設置為stage_music
+	   43 3A 5C 61 73
+	   6D 5F 6D 75 73
+	   69 63 5F 70 72
+	   6F 6A 65 63 74
+	   5C 6D 65 6E 75
+	   2E 77 61 76 20
+	   74 79 70 65 20
+	   77 61 76 65 61
+	   75 64 69 6F 20
+	   61 6C 69 61 73
+	   20 73 74 61 67
+	   65 5F 6D 75 73
+	   69 63 00
+ 00001D9D 70 6C 61 79 20	playstage_cd BYTE "play stage_music", 0														;撥放音檔的指令
+	   73 74 61 67 65
+	   5F 6D 75 73 69
+	   63 00
+ 00001DAE 73 74 6F 70 20	stopstage_cd BYTE "stop stage_music", 0														;暫停音檔的指令
+	   73 74 61 67 65
+	   5F 6D 75 73 69
+	   63 00
+ 00001DBF 63 6C 6F 73 65	closestage_cd BYTE "close stage_music", 0													;關閉音檔的指令
+	   20 73 74 61 67
+	   65 5F 6D 75 73
+	   69 63 00
+ 00001DD1 73 74 61 74 75	statusstage_cd BYTE "status stage_music mode", 0											;檢查音檔狀態的指令
+	   73 20 73 74 61
+	   67 65 5F 6D 75
+	   73 69 63 20 6D
+	   6F 64 65 00
+
+ 00001DE9  00000080 [		buffer BYTE 128 dup(0)					;緩衝區用於接收函數的返回資訊(指令執行結果)
+	    00
+	   ]
+ 00001E69  00000080 [		statusBuffer BYTE 128 dup(0)			;狀態緩衝區用於接收函數的返回資訊(撥放狀態)
+	    00
+	   ]
+
+ 00000000			.code
+
+				;延遲選關動畫更新頻率
+ 00000000			delayer1 PROC
+ 00000000  51				push ecx
+ 00000001  B9 004C4B40			mov ecx, 5000000
+ 00000006			L1:
+ 00000006  E2 FE			loop L1
+ 00000008  59				pop ecx
+ 00000009  C3				ret
+ 0000000A			delayer1 ENDP
+
+				;設置背景音樂
+ 0000000A			playmusic_stage PROC USES eax ecx edx	
+					invoke mciSendString, addr stage_cd, addr buffer, sizeof buffer, 0
+					invoke mciSendString, addr playstage_cd, addr buffer, sizeof buffer, 0
+
+					ret
+ 0000003D			playmusic_stage ENDP
+
+				;當背景音樂撥放完畢後，重新再撥一次
+ 0000003D			checkmusic_stage PROC USES eax ecx edx	
+					invoke mciSendString, addr statusstage_cd, addr statusBuffer, sizeof statusBuffer, 0		;得到音樂目前狀態
+
+ 00000056  53				push ebx
+
+ 00000057  8A 1D 00001E69 R		mov bl ,[statusBuffer]			;將狀態的第一個字放到bl中比較
+ 0000005D  80 FB 70		    cmp bl, 'p'						;若為p，則代表音樂還在撥放，跳到still_play (p = playing)
+ 00000060  74 1B			je still_play
+					
+					invoke mciSendString, addr closestage_cd, addr buffer, sizeof buffer, 0			;要先將當前音檔關掉後再呼叫撥放音樂
+ 00000078  E8 FFFFFF8D			CALL playmusic_stage															;呼叫撥放背景音樂
+
+ 0000007D				still_play:
+
+ 0000007D  5B				pop ebx
+
+					ret
+ 00000082			checkmusic_stage ENDP
+
+				;設置切換關卡音效
+ 00000082			playmusic_switchlevel PROC USES eax ecx edx	
+					INVOKE PlaySoundA, OFFSET level_switch, NULL, SND_ASYNC
+					
+					ret
+ 0000009B			playmusic_switchlevel ENDP
+
+				;設置選擇關卡音效
+ 0000009B			playmusic_chooselevel PROC PROC USES eax ecx edx
+					INVOKE PlaySoundA, OFFSET level_choose, NULL, SND_ASYNC
+
+					ret
+ 000000B4			playmusic_chooselevel ENDP
+
+ 000000B4			select PROC
+					.IF ax == 4D00h							;按右方向鍵
+						.IF selectstage == 1				;若現在為關卡1
+ 000000C3  E8 FFFFFFBA					call playmusic_switchlevel		;撥放切換關卡音效
+ 000000C8  80 05 00001D26 R				add selectstage, 1				;切換為關卡2
+	   01
+ 000000CF  C6 05 00001D25 R				mov selectbool, 1
+	   01
+						.ENDIF
+					.ENDIF
+					.IF ax == 4B00h							;按左方向鍵
+						.IF selectstage == 2				;若現在為關卡2
+ 000000E5  E8 FFFFFF98					call playmusic_switchlevel		;撥放切換關卡音效
+ 000000EA  80 2D 00001D26 R				sub selectstage, 1				;切換為關卡1
+	   01
+ 000000F1  C6 05 00001D25 R				mov selectbool, 1
+	   01
+						.ENDIF
+					.ENDIF
+					.IF ax == 011Bh							;按ESC鍵
+ 000000FE  C6 05 00001D26 R			mov selectstage, 1
+	   01
+ 00000105  C6 05 00000014 R			mov boolEnd, 1						
+	   01
+					.ENDIF
+					.IF ax == 1C0Dh							;按Enter鍵
+						INVOKE mciSendString, addr closestage_cd, addr buffer, sizeof buffer, 0
+ 00000128  E8 FFFFFF6E				call playmusic_chooselevel			;撥放選擇關卡音效
+						.IF selectstage == 1				;若選擇關卡1
+ 00000136  C6 05 00000000 E				mov levelNum, 1
+	   01
+ 0000013D  E8 00000000 E				call game1@0
+ 00000142  C6 05 00000014 R				mov boolEnd, 1
+	   01
+						.ENDIF
+						.IF selectstage == 2				;若選擇關卡2
+ 00000152  C6 05 00000000 E				mov levelNum, 2
+	   02
+ 00000159  E8 00000000 E				call game1@0
+ 0000015E  C6 05 00000014 R				mov boolEnd, 1
+	   01
+						.ENDIF
+					.ENDIF
+ 00000165  C3				ret
+ 00000166			select ENDP
+
+ 00000166			stage PROC
+					INVOKE GetStdHandle, STD_OUTPUT_HANDLE
+ 0000016D  A3 00000000 R		mov consoleHandle, eax
+					INVOKE SetConsoleCursorInfo, consoleHandle, ADDR CursorInfo
+
+ 00000182  C6 05 00000014 R		mov boolEnd, 0	;not the end
+	   00
+ 00000189  C6 05 00000000 E		mov levelNum, 1 ;初始第一關
+	   01
+ 00000190  C6 05 00001D26 R		mov selectstage, 1
+	   01
+ 00000197  C6 05 00001D25 R		mov selectbool, 0
+	   00
+
+ 0000019E  E8 00000000 E		call Clrscr
+ 000001A3  E8 FFFFFE62			call playmusic_stage	;撥放背景音樂
+
+					;繪製關卡1預覽圖
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row1, 120, stage1row1Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row2, 120, stage1row2Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row3, 120, stage1row3Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row4, 120, stage1row4Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row5, 120, stage1row5Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row6, 120, stage1row6Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row7, 120, stage1row7Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row8, 120, stage1row8Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row9, 120, stage1row9Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row10, 120, stage1row10Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row11, 120, stage1row11Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row12, 120, stage1row12Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row13, 120, stage1row13Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row14, 120, stage1row14Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row15, 120, stage1row15Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row16, 120, stage1row16Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row17, 120, stage1row17Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row18, 120, stage1row18Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row19, 120, stage1row19Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row20, 120, stage1row20Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row21, 120, stage1row21Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row22, 120, stage1row22Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row23, 120, stage1row23Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row24, 120, stage1row24Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row25, 120, stage1row25Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row26, 120, stage1row26Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row27, 120, stage1row27Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row28, 120, stage1row28Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row29, 120, stage1row29Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage1row30, 120, stage1row30Pos, ADDR cellsWritten
+
+
+ 0000050E			START:
+ 0000050E  E8 FFFFFB2A			CALL checkmusic_stage			;檢查背景音樂狀態並循環撥放音樂
+					.IF boolEnd == 1
+ 0000051C  E9 00000D3E				jmp endStage
+					.ENDIF
+					
+					.IF selectbool == 1
+						.IF selectstage == 1	;若選擇關卡1
+ 00000533  C6 05 00001D25 R				mov selectbool, 0
+	   00
+ 0000053A  EB 21					jmp drawStage1
+						.ENDIF
+						.IF selectstage == 2	;若選擇關卡2
+ 00000545  C6 05 00001D25 R				mov selectbool, 0
+	   00
+ 0000054C  E9 0000060E					jmp drawStage2
+						.ENDIF
+					.ENDIF
+
+ 00000551  E8 00000000 E		call Readkey
+ 00000556  E8 FFFFFB59			call select
+					
+ 0000055B  EB B1			jmp START
+
+				;繪製從關卡2到關卡1
+ 0000055D			drawStage1:
+					.IF stage1rowLength <= 120
+
+						;讓row從最後一格開始往前畫，並且逐漸右移，達到圖案從左往右平移的效果
+ 0000056A  83 2D 00001D21 R			sub stage1rowOffset, 1		;偏移量減1
+	   01
+ 00000571  80 05 00001D1F R			add stage1rowLength, 1		;長度加1
+	   01
+ 00000578  8D 1D 00000015 R			lea ebx, stage1row1			;ebx存放row的記憶體位址
+ 0000057E  03 1D 00001D21 R			add ebx, stage1rowOffset	;加上偏移量
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row1Pos, ADDR cellsWritten
+ 000005A9  8D 1D 0000008D R			lea ebx, stage1row2
+ 000005AF  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row2Pos, ADDR cellsWritten
+ 000005DA  8D 1D 00000105 R			lea ebx, stage1row3
+ 000005E0  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row3Pos, ADDR cellsWritten
+ 0000060B  8D 1D 0000017D R			lea ebx, stage1row4
+ 00000611  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row4Pos, ADDR cellsWritten
+ 0000063C  8D 1D 000001F5 R			lea ebx, stage1row5
+ 00000642  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row5Pos, ADDR cellsWritten
+ 0000066D  8D 1D 0000026D R			lea ebx, stage1row6
+ 00000673  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row6Pos, ADDR cellsWritten
+ 0000069E  8D 1D 000002E5 R			lea ebx, stage1row7
+ 000006A4  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row7Pos, ADDR cellsWritten
+ 000006CF  8D 1D 0000035D R			lea ebx, stage1row8
+ 000006D5  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row8Pos, ADDR cellsWritten
+ 00000700  8D 1D 000003D5 R			lea ebx, stage1row9
+ 00000706  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row9Pos, ADDR cellsWritten
+ 00000731  8D 1D 0000044D R			lea ebx, stage1row10
+ 00000737  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row10Pos, ADDR cellsWritten
+ 00000762  8D 1D 000004C5 R			lea ebx, stage1row11
+ 00000768  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row11Pos, ADDR cellsWritten
+ 00000793  8D 1D 0000053D R			lea ebx, stage1row12
+ 00000799  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row12Pos, ADDR cellsWritten
+ 000007C4  8D 1D 000005B5 R			lea ebx, stage1row13
+ 000007CA  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row13Pos, ADDR cellsWritten
+ 000007F5  8D 1D 0000062D R			lea ebx, stage1row14
+ 000007FB  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row14Pos, ADDR cellsWritten
+ 00000826  8D 1D 000006A5 R			lea ebx, stage1row15
+ 0000082C  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row15Pos, ADDR cellsWritten
+ 00000857  8D 1D 0000071D R			lea ebx, stage1row16
+ 0000085D  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row16Pos, ADDR cellsWritten
+ 00000888  8D 1D 00000795 R			lea ebx, stage1row17
+ 0000088E  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row17Pos, ADDR cellsWritten
+ 000008B9  8D 1D 0000080D R			lea ebx, stage1row18
+ 000008BF  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row18Pos, ADDR cellsWritten
+ 000008EA  8D 1D 00000885 R			lea ebx, stage1row19
+ 000008F0  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row19Pos, ADDR cellsWritten
+ 0000091B  8D 1D 000008FA R			lea ebx, stage1row20
+ 00000921  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row20Pos, ADDR cellsWritten
+ 0000094C  8D 1D 00000972 R			lea ebx, stage1row21
+ 00000952  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row21Pos, ADDR cellsWritten
+ 0000097D  8D 1D 000009EA R			lea ebx, stage1row22
+ 00000983  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row22Pos, ADDR cellsWritten
+ 000009AE  8D 1D 00000A62 R			lea ebx, stage1row23
+ 000009B4  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row23Pos, ADDR cellsWritten
+ 000009DF  8D 1D 00000ADA R			lea ebx, stage1row24
+ 000009E5  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row24Pos, ADDR cellsWritten
+ 00000A10  8D 1D 00000B52 R			lea ebx, stage1row25
+ 00000A16  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row25Pos, ADDR cellsWritten
+ 00000A41  8D 1D 00000BCA R			lea ebx, stage1row26
+ 00000A47  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row26Pos, ADDR cellsWritten
+ 00000A72  8D 1D 00000C42 R			lea ebx, stage1row27
+ 00000A78  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row27Pos, ADDR cellsWritten
+ 00000AA3  8D 1D 00000CBA R			lea ebx, stage1row28
+ 00000AA9  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row28Pos, ADDR cellsWritten
+ 00000AD4  8D 1D 00000D32 R			lea ebx, stage1row29
+ 00000ADA  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row29Pos, ADDR cellsWritten
+ 00000B05  8D 1D 00000DAA R			lea ebx, stage1row30
+ 00000B0B  03 1D 00001D21 R			add ebx, stage1rowOffset
+						INVOKE WriteConsoleOutputCharacter, consoleHandle, ebx, stage1rowLength, stage1row30Pos, ADDR cellsWritten
+					.ENDIF
+
+					.IF stage1rowLength == 120		;當長度加到120
+ 00000B3F  C7 05 00001D21 R			mov stage1rowOffset, 120	;偏移量重置為120
+	   00000078
+ 00000B49  C6 05 00001D1F R			mov stage1rowLength, 0		;長度重置為0
+	   00
+ 00000B50  E9 FFFFF9B9				jmp START
+					.ENDIF
+ 00000B55  E8 FFFFF4A6			call delayer1
+ 00000B5A  E9 FFFFF9FE			jmp drawStage1
+
+				;繪製從關卡1到關卡2
+ 00000B5F			drawStage2:
+					
+					;將row左移1
+ 00000B5F  66| 83 2D			sub stage2row1Pos.x, 1
+	   00001CA7 R 01
+ 00000B67  66| 83 2D			sub stage2row2Pos.x, 1
+	   00001CAB R 01
+ 00000B6F  66| 83 2D			sub stage2row3Pos.x, 1
+	   00001CAF R 01
+ 00000B77  66| 83 2D			sub stage2row4Pos.x, 1
+	   00001CB3 R 01
+ 00000B7F  66| 83 2D			sub stage2row5Pos.x, 1
+	   00001CB7 R 01
+ 00000B87  66| 83 2D			sub stage2row6Pos.x, 1
+	   00001CBB R 01
+ 00000B8F  66| 83 2D			sub stage2row7Pos.x, 1
+	   00001CBF R 01
+ 00000B97  66| 83 2D			sub stage2row8Pos.x, 1
+	   00001CC3 R 01
+ 00000B9F  66| 83 2D			sub stage2row9Pos.x, 1
+	   00001CC7 R 01
+ 00000BA7  66| 83 2D			sub stage2row10Pos.x, 1
+	   00001CCB R 01
+ 00000BAF  66| 83 2D			sub stage2row11Pos.x, 1
+	   00001CCF R 01
+ 00000BB7  66| 83 2D			sub stage2row12Pos.x, 1
+	   00001CD3 R 01
+ 00000BBF  66| 83 2D			sub stage2row13Pos.x, 1
+	   00001CD7 R 01
+ 00000BC7  66| 83 2D			sub stage2row14Pos.x, 1
+	   00001CDB R 01
+ 00000BCF  66| 83 2D			sub stage2row15Pos.x, 1
+	   00001CDF R 01
+ 00000BD7  66| 83 2D			sub stage2row16Pos.x, 1
+	   00001CE3 R 01
+ 00000BDF  66| 83 2D			sub stage2row17Pos.x, 1
+	   00001CE7 R 01
+ 00000BE7  66| 83 2D			sub stage2row18Pos.x, 1
+	   00001CEB R 01
+ 00000BEF  66| 83 2D			sub stage2row19Pos.x, 1
+	   00001CEF R 01
+ 00000BF7  66| 83 2D			sub stage2row20Pos.x, 1
+	   00001CF3 R 01
+ 00000BFF  66| 83 2D			sub stage2row21Pos.x, 1
+	   00001CF7 R 01
+ 00000C07  66| 83 2D			sub stage2row22Pos.x, 1
+	   00001CFB R 01
+ 00000C0F  66| 83 2D			sub stage2row23Pos.x, 1
+	   00001CFF R 01
+ 00000C17  66| 83 2D			sub stage2row24Pos.x, 1
+	   00001D03 R 01
+ 00000C1F  66| 83 2D			sub stage2row25Pos.x, 1
+	   00001D07 R 01
+ 00000C27  66| 83 2D			sub stage2row26Pos.x, 1
+	   00001D0B R 01
+ 00000C2F  66| 83 2D			sub stage2row27Pos.x, 1
+	   00001D0F R 01
+ 00000C37  66| 83 2D			sub stage2row28Pos.x, 1
+	   00001D13 R 01
+ 00000C3F  66| 83 2D			sub stage2row29Pos.x, 1
+	   00001D17 R 01
+ 00000C47  66| 83 2D			sub stage2row30Pos.x, 1
+	   00001D1B R 01
+
+					.IF stage2rowLength <= 120	;若長度不到120
+ 00000C58  80 05 00001D20 R			add stage2rowLength, 1	;將長度加1
+	   01
+					.ENDIF
+
+					;將長度從0遞增，並逐漸左移，來達成圖案從右到左平移的效果
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row1, stage2rowLength, stage2row1Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row2, stage2rowLength, stage2row2Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row3, stage2rowLength, stage2row3Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row4, stage2rowLength, stage2row4Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row5, stage2rowLength, stage2row5Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row6, stage2rowLength, stage2row6Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row7, stage2rowLength, stage2row7Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row8, stage2rowLength, stage2row8Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row9, stage2rowLength, stage2row9Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row10, stage2rowLength, stage2row10Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row11, stage2rowLength, stage2row11Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row12, stage2rowLength, stage2row12Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row13, stage2rowLength, stage2row13Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row14, stage2rowLength, stage2row14Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row15, stage2rowLength, stage2row15Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row16, stage2rowLength, stage2row16Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row17, stage2rowLength, stage2row17Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row18, stage2rowLength, stage2row18Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row19, stage2rowLength, stage2row19Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row20, stage2rowLength, stage2row20Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row21, stage2rowLength, stage2row21Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row22, stage2rowLength, stage2row22Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row23, stage2rowLength, stage2row23Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row24, stage2rowLength, stage2row24Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row25, stage2rowLength, stage2row25Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row26, stage2rowLength, stage2row26Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row27, stage2rowLength, stage2row27Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row28, stage2rowLength, stage2row28Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row29, stage2rowLength, stage2row29Pos, ADDR cellsWritten
+					INVOKE WriteConsoleOutputCharacter, consoleHandle, ADDR stage2row30, stage2rowLength, stage2row30Pos, ADDR cellsWritten
+
+					.IF stage2row1Pos.x == 0		;當row左移到最左邊
+ 0000113B  66| C7 05				mov stage2row1Pos.x, 120	;重置row的位置到最右
+	   00001CA7 R
+	   0078
+ 00001144  66| C7 05				mov stage2row2Pos.x, 120
+	   00001CAB R
+	   0078
+ 0000114D  66| C7 05				mov stage2row3Pos.x, 120
+	   00001CAF R
+	   0078
+ 00001156  66| C7 05				mov stage2row4Pos.x, 120
+	   00001CB3 R
+	   0078
+ 0000115F  66| C7 05				mov stage2row5Pos.x, 120
+	   00001CB7 R
+	   0078
+ 00001168  66| C7 05				mov stage2row6Pos.x, 120
+	   00001CBB R
+	   0078
+ 00001171  66| C7 05				mov stage2row7Pos.x, 120
+	   00001CBF R
+	   0078
+ 0000117A  66| C7 05				mov stage2row8Pos.x, 120
+	   00001CC3 R
+	   0078
+ 00001183  66| C7 05				mov stage2row9Pos.x, 120
+	   00001CC7 R
+	   0078
+ 0000118C  66| C7 05				mov stage2row10Pos.x, 120
+	   00001CCB R
+	   0078
+ 00001195  66| C7 05				mov stage2row11Pos.x, 120
+	   00001CCF R
+	   0078
+ 0000119E  66| C7 05				mov stage2row12Pos.x, 120
+	   00001CD3 R
+	   0078
+ 000011A7  66| C7 05				mov stage2row13Pos.x, 120
+	   00001CD7 R
+	   0078
+ 000011B0  66| C7 05				mov stage2row14Pos.x, 120
+	   00001CDB R
+	   0078
+ 000011B9  66| C7 05				mov stage2row15Pos.x, 120
+	   00001CDF R
+	   0078
+ 000011C2  66| C7 05				mov stage2row16Pos.x, 120
+	   00001CE3 R
+	   0078
+ 000011CB  66| C7 05				mov stage2row17Pos.x, 120
+	   00001CE7 R
+	   0078
+ 000011D4  66| C7 05				mov stage2row18Pos.x, 120
+	   00001CEB R
+	   0078
+ 000011DD  66| C7 05				mov stage2row19Pos.x, 120
+	   00001CEF R
+	   0078
+ 000011E6  66| C7 05				mov stage2row20Pos.x, 120
+	   00001CF3 R
+	   0078
+ 000011EF  66| C7 05				mov stage2row21Pos.x, 120
+	   00001CF7 R
+	   0078
+ 000011F8  66| C7 05				mov stage2row22Pos.x, 120
+	   00001CFB R
+	   0078
+ 00001201  66| C7 05				mov stage2row23Pos.x, 120
+	   00001CFF R
+	   0078
+ 0000120A  66| C7 05				mov stage2row24Pos.x, 120
+	   00001D03 R
+	   0078
+ 00001213  66| C7 05				mov stage2row25Pos.x, 120
+	   00001D07 R
+	   0078
+ 0000121C  66| C7 05				mov stage2row26Pos.x, 120
+	   00001D0B R
+	   0078
+ 00001225  66| C7 05				mov stage2row27Pos.x, 120
+	   00001D0F R
+	   0078
+ 0000122E  66| C7 05				mov stage2row28Pos.x, 120
+	   00001D13 R
+	   0078
+ 00001237  66| C7 05				mov stage2row29Pos.x, 120
+	   00001D17 R
+	   0078
+ 00001240  66| C7 05				mov stage2row30Pos.x, 120
+	   00001D1B R
+	   0078
+ 00001249  C6 05 00001D20 R			mov stage2rowLength, 0
+	   00
+ 00001250  E9 FFFFF2B9				jmp START
+					.ENDIF
+ 00001255  E8 FFFFEDA6			call delayer1
+ 0000125A  E9 FFFFF900			jmp drawStage2
+
+ 0000125F			endStage:
+					INVOKE mciSendString, addr closestage_cd, addr buffer, sizeof buffer, 0	;離開界面時關閉背景音樂
+ 00001275  C3				ret
+
+ 00001276			stage ENDP
+				END stage
+Microsoft (R) Macro Assembler Version 14.42.34435.0	    12/30/24 02:47:22
+levelstage.asm						     Symbols 2 - 1
+
+
+
+
+Structures and Unions:
+
+                N a m e                  Size
+                                         Offset      Type
+
+CONSOLE_CURSOR_INFO  . . . . . .	 00000008
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  bVisible . . . . . . . . . . .	 00000004	 DWord
+CONSOLE_SCREEN_BUFFER_INFO . . .	 00000016
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  dwCursorPosition . . . . . . .	 00000004	 DWord
+  wAttributes  . . . . . . . . .	 00000008	 Word
+  srWindow . . . . . . . . . . .	 0000000A	 QWord
+  dwMaximumWindowSize  . . . . .	 00000012	 DWord
+COORD  . . . . . . . . . . . . .	 00000004
+  X  . . . . . . . . . . . . . .	 00000000	 Word
+  Y  . . . . . . . . . . . . . .	 00000002	 Word
+FILETIME . . . . . . . . . . . .	 00000008
+  loDateTime . . . . . . . . . .	 00000000	 DWord
+  hiDateTime . . . . . . . . . .	 00000004	 DWord
+FOCUS_EVENT_RECORD . . . . . . .	 00000004
+  bSetFocus  . . . . . . . . . .	 00000000	 DWord
+FPU_ENVIRON  . . . . . . . . . .	 0000001C
+  controlWord  . . . . . . . . .	 00000000	 Word
+  statusWord . . . . . . . . . .	 00000004	 Word
+  tagWord  . . . . . . . . . . .	 00000008	 Word
+  instrPointerOffset . . . . . .	 0000000C	 DWord
+  instrPointerSelector . . . . .	 00000010	 DWord
+  operandPointerOffset . . . . .	 00000014	 DWord
+  operandPointerSelector . . . .	 00000018	 Word
+INPUT_RECORD . . . . . . . . . .	 00000014
+  EventType  . . . . . . . . . .	 00000000	 Word
+  Event  . . . . . . . . . . . .	 00000004	 XmmWord
+  bKeyDown . . . . . . . . . . .	 00000000	 DWord
+  wRepeatCount . . . . . . . . .	 00000004	 Word
+  wVirtualKeyCode  . . . . . . .	 00000006	 Word
+  wVirtualScanCode . . . . . . .	 00000008	 Word
+  uChar  . . . . . . . . . . . .	 0000000A	 Word
+  UnicodeChar  . . . . . . . . .	 00000000	 Word
+  AsciiChar  . . . . . . . . . .	 00000000	 Byte
+  dwControlKeyState  . . . . . .	 0000000C	 DWord
+  dwMousePosition  . . . . . . .	 00000000	 DWord
+  dwButtonState  . . . . . . . .	 00000004	 DWord
+  dwMouseControlKeyState . . . .	 00000008	 DWord
+  dwEventFlags . . . . . . . . .	 0000000C	 DWord
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+  dwCommandId  . . . . . . . . .	 00000000	 DWord
+  bSetFocus  . . . . . . . . . .	 00000000	 DWord
+KEY_EVENT_RECORD . . . . . . . .	 00000010
+  bKeyDown . . . . . . . . . . .	 00000000	 DWord
+  wRepeatCount . . . . . . . . .	 00000004	 Word
+  wVirtualKeyCode  . . . . . . .	 00000006	 Word
+  wVirtualScanCode . . . . . . .	 00000008	 Word
+  uChar  . . . . . . . . . . . .	 0000000A	 Word
+  UnicodeChar  . . . . . . . . .	 00000000	 Word
+  AsciiChar  . . . . . . . . . .	 00000000	 Byte
+  dwControlKeyState  . . . . . .	 0000000C	 DWord
+MENU_EVENT_RECORD  . . . . . . .	 00000004
+  dwCommandId  . . . . . . . . .	 00000000	 DWord
+MOUSE_EVENT_RECORD . . . . . . .	 00000010
+  dwMousePosition  . . . . . . .	 00000000	 DWord
+  dwButtonState  . . . . . . . .	 00000004	 DWord
+  dwMouseControlKeyState . . . .	 00000008	 DWord
+  dwEventFlags . . . . . . . . .	 0000000C	 DWord
+SMALL_RECT . . . . . . . . . . .	 00000008
+  Left . . . . . . . . . . . . .	 00000000	 Word
+  Top  . . . . . . . . . . . . .	 00000002	 Word
+  Right  . . . . . . . . . . . .	 00000004	 Word
+  Bottom . . . . . . . . . . . .	 00000006	 Word
+SYSTEMTIME . . . . . . . . . . .	 00000010
+  wYear  . . . . . . . . . . . .	 00000000	 Word
+  wMonth . . . . . . . . . . . .	 00000002	 Word
+  wDayOfWeek . . . . . . . . . .	 00000004	 Word
+  wDay . . . . . . . . . . . . .	 00000006	 Word
+  wHour  . . . . . . . . . . . .	 00000008	 Word
+  wMinute  . . . . . . . . . . .	 0000000A	 Word
+  wSecond  . . . . . . . . . . .	 0000000C	 Word
+  wMilliseconds  . . . . . . . .	 0000000E	 Word
+WINDOW_BUFFER_SIZE_RECORD  . . .	 00000004
+  dwSize . . . . . . . . . . . .	 00000000	 DWord
+
+
+Segments and Groups:
+
+                N a m e                 Size     Length   Align   Combine Class
+
+FLAT . . . . . . . . . . . . . .	GROUP
+STACK  . . . . . . . . . . . . .	32 Bit	 00001000 Para	  Stack	  'STACK'	 
+_DATA  . . . . . . . . . . . . .	32 Bit	 00001EE9 Para	  Public  'DATA'	
+_TEXT  . . . . . . . . . . . . .	32 Bit	 00001276 Para	  Public  'CODE'	
+
+
+Procedures, parameters, and locals:
+
+                N a m e                 Type     Value    Attr
+
+CloseDriver  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CloseFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CloseHandle  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Clrscr . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateFileA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+CreateOutputFile . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Crlf . . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DefDriverProc  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Delay  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DriverCallback . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DrvGetModuleHandle . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DumpMem  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+DumpRegs . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ExitProcess  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FileTimeToDosDateTime  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FileTimeToSystemTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FlushConsoleInputBuffer  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+FormatMessageA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetCommandLineA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetCommandTail . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleCP . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetConsoleScreenBufferInfo . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetDateTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetDriverModuleHandle  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetFileTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetKeyState  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetLastError . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMaxXY . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetMseconds  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetNumberOfConsoleInputEvents  .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetProcessHeap . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetStdHandle . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetSystemTime  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+GetTickCount . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Gotoxy . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapAlloc  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapCreate . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapDestroy  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapFree . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+HeapSize . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+IsDigit  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+LocalFree  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MessageBoxA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MigrateAllDrivers  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MigrateSoundEvents . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MsgBoxAsk  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+MsgBox . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+NotifyCallbackData . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+OpenDriver . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+OpenInputFile  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ParseDecimal32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ParseInteger32 . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PeekConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PlaySoundA . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+PlaySoundW . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Random32 . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+RandomRange  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Randomize  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadChar . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadConsoleA . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadConsoleInputA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadDec  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFile . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFloat  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadFromFile . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadHex  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadInt  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadKeyFlush . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadKey  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ReadString . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SendDriverMessage  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleCursorInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleCursorPosition . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleMode . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleScreenBufferSize . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleTextAttribute  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleTitleA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetConsoleWindowInfo . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetFilePointer . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetLocalTime . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SetTextColor . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+ShowFPUStack . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Sleep  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+StrLength  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_compare  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_copy . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_length . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_trim . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+Str_ucase  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+SystemTimeToFileTime . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WOW32DriverCallback  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WOW32ResolveMultiMediaHandle . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WOWAppExit . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WaitMsg  . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WinmmLogoff  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WinmmLogon . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteBinB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteBin . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteChar  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleA  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleOutputAttribute  . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteConsoleOutputCharacterA . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteDec . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteFile  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteFloat . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteHexB  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteHex . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteInt . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteStackFrameName  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteStackFrame  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteString  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteToFile  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+WriteWindowsMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+aux32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+auxGetDevCapsA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+auxGetDevCapsW . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+auxGetNumDevs  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+auxGetVolume . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+auxOutMessage  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+auxSetVolume . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+checkmusic_stage . . . . . . . .	P Near	 0000003D _TEXT	Length= 00000045 Public STDCALL
+  still_play . . . . . . . . . .	L Near	 0000007D _TEXT	
+delayer1 . . . . . . . . . . . .	P Near	 00000000 _TEXT	Length= 0000000A Public STDCALL
+  L1 . . . . . . . . . . . . . .	L Near	 00000006 _TEXT	
+gfxAddGfx  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxBatchChange . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxCreateGfxFactoriesList  . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxCreateZoneFactoriesList . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxDestroyDeviceInterfaceList  .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxEnumerateGfxs . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxLogoff  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxLogon . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxModifyGfx . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxOpenGfx . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+gfxRemoveGfx . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joy32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyConfigChanged . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyGetDevCapsA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyGetDevCapsW . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyGetNumDevs  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyGetPosEx  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyGetPos  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyGetThreshold  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joyReleaseCapture  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joySetCapture  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+joySetThreshold  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mci32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciDriverNotify  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciDriverYield . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciExecute . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciFreeCommandResource . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetCreatorTask  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetDeviceIDA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetDeviceIDFromElementIDA . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetDeviceIDFromElementIDW . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetDeviceIDW  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetDriverData . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetErrorStringA . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetErrorStringW . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciGetYieldProc  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciLoadCommandResource . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciSendCommandA  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciSendCommandW  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciSendStringA . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciSendStringW . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciSetDriverData . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mciSetYieldProc  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mid32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiConnect  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiDisconnect . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInAddBuffer  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInClose  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInGetDevCapsA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInGetDevCapsW  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInGetErrorTextA  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInGetErrorTextW  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInGetID  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInGetNumDevs . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInMessage  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInOpen . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInPrepareHeader  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInReset  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInStart  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInStop . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiInUnprepareHeader  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutCacheDrumPatches  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutCachePatches  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutClose . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetDevCapsA . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetDevCapsW . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetErrorTextA . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetErrorTextW . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetID . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetNumDevs  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutGetVolume . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutLongMsg . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutMessage . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutOpen  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutPrepareHeader . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutReset . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutSetVolume . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutShortMsg  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiOutUnprepareHeader . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamClose  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamOpen . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamOut  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamPause  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamPosition . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamProperty . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamRestart  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+midiStreamStop . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerClose . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetControlDetailsA  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetControlDetailsW  . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetDevCapsA . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetDevCapsW . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetID . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetLineControlsA  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetLineControlsW  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetLineInfoA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetLineInfoW  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerGetNumDevs  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerMessage . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerOpen  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mixerSetControlDetails . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmDrvInstall . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmGetCurrentTask . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmTaskBlock  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmTaskCreate . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmTaskSignal . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmTaskYield  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioAdvance  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioAscend . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioClose  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioCreateChunk  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioDescend  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioFlush  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioGetInfo  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioInstallIOProcA . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioInstallIOProcW . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioOpenA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioOpenW  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioRead . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioRenameA  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioRenameW  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioSeek . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioSendMessage  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioSetBuffer  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioSetInfo  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioStringToFOURCCA  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioStringToFOURCCW  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmioWrite  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mmsystemGetVersion . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mod32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+mxd32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+playmusic_chooselevel  . . . . .	P Near	 0000009B _TEXT	Length= 00000019 Public STDCALL
+playmusic_stage  . . . . . . . .	P Near	 0000000A _TEXT	Length= 00000033 Public STDCALL
+playmusic_switchlevel  . . . . .	P Near	 00000082 _TEXT	Length= 00000019 Public STDCALL
+printf . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+scanf  . . . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+select . . . . . . . . . . . . .	P Near	 000000B4 _TEXT	Length= 000000B2 Public STDCALL
+sndPlaySoundA  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+sndPlaySoundW  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+stage  . . . . . . . . . . . . .	P Near	 00000166 _TEXT	Length= 00001110 Public STDCALL
+  START  . . . . . . . . . . . .	L Near	 0000050E _TEXT	
+  drawStage1 . . . . . . . . . .	L Near	 0000055D _TEXT	
+  drawStage2 . . . . . . . . . .	L Near	 00000B5F _TEXT	
+  endStage . . . . . . . . . . .	L Near	 0000125F _TEXT	
+tid32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeBeginPeriod  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeEndPeriod  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeGetDevCaps . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeGetSystemTime  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeGetTime  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeKillEvent  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+timeSetEvent . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInAddBuffer  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInClose  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetDevCapsA  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetDevCapsW  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetErrorTextA  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetErrorTextW  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetID  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetNumDevs . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInGetPosition  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInMessage  . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInOpen . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInPrepareHeader  . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInReset  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInStart  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInStop . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveInUnprepareHeader  . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutBreakLoop . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutClose . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetDevCapsA . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetDevCapsW . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetErrorTextA . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetErrorTextW . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetID . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetNumDevs  . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetPitch  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetPlaybackRate . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetPosition . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutGetVolume . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutMessage . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutOpen  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutPause . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutPrepareHeader . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutReset . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutRestart . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutSetPitch  . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutSetPlaybackRate . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutSetVolume . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutUnprepareHeader . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+waveOutWrite . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+wid32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+winmmDbgOut  . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+winmmSetDebugLevel . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+wod32Message . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External STDCALL
+wsprintfA  . . . . . . . . . . .	P Near	 00000000 FLAT	Length= 00000000 External C
+
+
+Symbols:
+
+                N a m e                 Type     Value    Attr
+
+@CodeSize  . . . . . . . . . . .	Number	 00000000h   
+@DataSize  . . . . . . . . . . .	Number	 00000000h   
+@Interface . . . . . . . . . . .	Number	 00000003h   
+@Model . . . . . . . . . . . . .	Number	 00000007h   
+@code  . . . . . . . . . . . . .	Text   	 _TEXT
+@data  . . . . . . . . . . . . .	Text   	 FLAT
+@fardata?  . . . . . . . . . . .	Text   	 FLAT
+@fardata . . . . . . . . . . . .	Text   	 FLAT
+@stack . . . . . . . . . . . . .	Text   	 FLAT
+ALT_MASK . . . . . . . . . . . .	Number	 00000003h   
+CAPSLOCK_ON  . . . . . . . . . .	Number	 00000080h   
+CREATE_ALWAYS  . . . . . . . . .	Number	 00000002h   
+CREATE_NEW . . . . . . . . . . .	Number	 00000001h   
+CTRL_MASK  . . . . . . . . . . .	Number	 0000000Ch   
+CreateFile . . . . . . . . . . .	Text   	 CreateFileA
+CursorInfo . . . . . . . . . . .	CONSOLE_CURSOR_INFO  0000000C _DATA	
+DO_NOT_SHARE . . . . . . . . . .	Number	 00000000h   
+ENABLE_ECHO_INPUT  . . . . . . .	Number	 00000004h   
+ENABLE_LINE_INPUT  . . . . . . .	Number	 00000002h   
+ENABLE_MOUSE_INPUT . . . . . . .	Number	 00000010h   
+ENABLE_PROCESSED_INPUT . . . . .	Number	 00000001h   
+ENABLE_PROCESSED_OUTPUT  . . . .	Number	 00000001h   
+ENABLE_WINDOW_INPUT  . . . . . .	Number	 00000008h   
+ENABLE_WRAP_AT_EOL_OUTPUT  . . .	Number	 00000002h   
+ENHANCED_KEY . . . . . . . . . .	Number	 00000100h   
+FALSE  . . . . . . . . . . . . .	Number	 00000000h   
+FILE_APPEND_DATA . . . . . . . .	Number	 00000004h   
+FILE_ATTRIBUTE_ARCHIVE . . . . .	Number	 00000020h   
+FILE_ATTRIBUTE_COMPRESSED  . . .	Number	 00000800h   
+FILE_ATTRIBUTE_DEVICE  . . . . .	Number	 00000040h   
+FILE_ATTRIBUTE_DIRECTORY . . . .	Number	 00000010h   
+FILE_ATTRIBUTE_ENCRYPTED . . . .	Number	 00004000h   
+FILE_ATTRIBUTE_HIDDEN  . . . . .	Number	 00000002h   
+FILE_ATTRIBUTE_NORMAL  . . . . .	Number	 00000080h   
+FILE_ATTRIBUTE_NOT_CONTENT_INDEXED .	Number	 00002000h   
+FILE_ATTRIBUTE_OFFLINE . . . . .	Number	 00001000h   
+FILE_ATTRIBUTE_READONLY  . . . .	Number	 00000001h   
+FILE_ATTRIBUTE_REPARSE_POINT . .	Number	 00000400h   
+FILE_ATTRIBUTE_SPARSE_FILE . . .	Number	 00000200h   
+FILE_ATTRIBUTE_SYSTEM  . . . . .	Number	 00000004h   
+FILE_ATTRIBUTE_TEMPORARY . . . .	Number	 00000100h   
+FILE_BEGIN . . . . . . . . . . .	Number	 00000000h   
+FILE_CURRENT . . . . . . . . . .	Number	 00000001h   
+FILE_DELETE_CHILD  . . . . . . .	Number	 00000040h   
+FILE_END . . . . . . . . . . . .	Number	 00000002h   
+FILE_READ_DATA . . . . . . . . .	Number	 00000001h   
+FILE_SHARE_DELETE  . . . . . . .	Number	 00000004h   
+FILE_SHARE_READ  . . . . . . . .	Number	 00000001h   
+FILE_SHARE_WRITE . . . . . . . .	Number	 00000002h   
+FILE_WRITE_DATA  . . . . . . . .	Number	 00000002h   
+FOCUS_EVENT  . . . . . . . . . .	Number	 00000010h   
+FORMAT_MESSAGE_ALLOCATE_BUFFER .	Number	 00000100h   
+FORMAT_MESSAGE_FROM_SYSTEM . . .	Number	 00001000h   
+FormatMessage  . . . . . . . . .	Text   	 FormatMessageA
+GENERIC_ALL  . . . . . . . . . .	Number	 10000000h   
+GENERIC_EXECUTE  . . . . . . . .	Number	 20000000h   
+GENERIC_READ . . . . . . . . . .	Number	 -80000000h   
+GENERIC_WRITE  . . . . . . . . .	Number	 40000000h   
+GetCommandLine . . . . . . . . .	Text   	 GetCommandLineA
+HANDLE . . . . . . . . . . . . .	Text   	 DWORD
+HEAP_GENERATE_EXCEPTIONS . . . .	Number	 00000004h   
+HEAP_GROWABLE  . . . . . . . . .	Number	 00000002h   
+HEAP_NO_SERIALIZE  . . . . . . .	Number	 00000001h   
+HEAP_REALLOC_IN_PLACE_ONLY . . .	Number	 00000010h   
+HEAP_ZERO_MEMORY . . . . . . . .	Number	 00000008h   
+IDABORT  . . . . . . . . . . . .	Number	 00000003h   
+IDCANCEL . . . . . . . . . . . .	Number	 00000002h   
+IDCLOSE  . . . . . . . . . . . .	Number	 00000008h   
+IDCONTINUE . . . . . . . . . . .	Number	 0000000Bh   
+IDHELP . . . . . . . . . . . . .	Number	 00000009h   
+IDIGNORE . . . . . . . . . . . .	Number	 00000005h   
+IDNO . . . . . . . . . . . . . .	Number	 00000007h   
+IDOK . . . . . . . . . . . . . .	Number	 00000001h   
+IDRETRY  . . . . . . . . . . . .	Number	 00000004h   
+IDTIMEOUT  . . . . . . . . . . .	Number	 00007D00h   
+IDTRYAGAIN . . . . . . . . . . .	Number	 0000000Ah   
+IDYES  . . . . . . . . . . . . .	Number	 00000006h   
+INVALID_HANDLE_VALUE . . . . . .	Number	 -00000001h   
+KBDOWN_FLAG  . . . . . . . . . .	Number	 00000001h   
+KEY_EVENT  . . . . . . . . . . .	Number	 00000001h   
+KEY_MASKS  . . . . . . . . . . .	Number	 0000001Fh   
+LEFT_ALT_PRESSED . . . . . . . .	Number	 00000002h   
+LEFT_CTRL_PRESSED  . . . . . . .	Number	 00000008h   
+MB_ABORTRETRYIGNORE  . . . . . .	Number	 00000002h   
+MB_APPLMODAL . . . . . . . . . .	Number	 00000000h   
+MB_CANCELTRYCONTINUE . . . . . .	Number	 00000006h   
+MB_DEFBUTTON1  . . . . . . . . .	Number	 00000000h   
+MB_DEFBUTTON2  . . . . . . . . .	Number	 00000100h   
+MB_DEFBUTTON3  . . . . . . . . .	Number	 00000200h   
+MB_DEFBUTTON4  . . . . . . . . .	Number	 00000300h   
+MB_HELP  . . . . . . . . . . . .	Number	 00004000h   
+MB_ICONASTERISK  . . . . . . . .	Number	 00000040h   
+MB_ICONERROR . . . . . . . . . .	Number	 00000010h   
+MB_ICONEXCLAMATION . . . . . . .	Number	 00000030h   
+MB_ICONHAND  . . . . . . . . . .	Number	 00000010h   
+MB_ICONINFORMATION . . . . . . .	Number	 00000040h   
+MB_ICONQUESTION  . . . . . . . .	Number	 00000020h   
+MB_ICONSTOP  . . . . . . . . . .	Number	 00000010h   
+MB_ICONWARNING . . . . . . . . .	Number	 00000030h   
+MB_OKCANCEL  . . . . . . . . . .	Number	 00000001h   
+MB_OK  . . . . . . . . . . . . .	Number	 00000000h   
+MB_RETRYCANCEL . . . . . . . . .	Number	 00000005h   
+MB_SYSTEMMODAL . . . . . . . . .	Number	 00001000h   
+MB_TASKMODAL . . . . . . . . . .	Number	 00002000h   
+MB_USERICON  . . . . . . . . . .	Number	 00000080h   
+MB_YESNOCANCEL . . . . . . . . .	Number	 00000003h   
+MB_YESNO . . . . . . . . . . . .	Number	 00000004h   
+MENU_EVENT . . . . . . . . . . .	Number	 00000008h   
+MOUSE_EVENT  . . . . . . . . . .	Number	 00000002h   
+MessageBox . . . . . . . . . . .	Text   	 MessageBoxA
+NULL . . . . . . . . . . . . . .	Number	 00000000h   
+NUMLOCK_ON . . . . . . . . . . .	Number	 00000020h   
+OPEN_ALWAYS  . . . . . . . . . .	Number	 00000004h   
+OPEN_EXISTING  . . . . . . . . .	Number	 00000003h   
+PeekConsoleInput . . . . . . . .	Text   	 PeekConsoleInputA
+PlaySound  . . . . . . . . . . .	Text   	 PlaySoundA
+RIGHT_ALT_PRESSED  . . . . . . .	Number	 00000001h   
+RIGHT_CTRL_PRESSED . . . . . . .	Number	 00000004h   
+ReadConsoleInput . . . . . . . .	Text   	 ReadConsoleInputA
+ReadConsole  . . . . . . . . . .	Text   	 ReadConsoleA
+SCROLLLOCK_ON  . . . . . . . . .	Number	 00000040h   
+SHIFT_MASK . . . . . . . . . . .	Number	 00000010h   
+SHIFT_PRESSED  . . . . . . . . .	Number	 00000010h   
+SND_ASYNC  . . . . . . . . . . .	DWord	 00001D27 _DATA	
+SND_LOOP_ASYNC . . . . . . . . .	DWord	 00001D33 _DATA	
+SND_LOOP . . . . . . . . . . . .	DWord	 00001D2B _DATA	
+SND_NOSTOP . . . . . . . . . . .	DWord	 00001D2F _DATA	
+STD_ERROR_HANDLE . . . . . . . .	Number	 -0000000Ch   
+STD_INPUT_HANDLE . . . . . . . .	Number	 -0000000Ah   
+STD_OUTPUT_HANDLE  . . . . . . .	Number	 -0000000Bh   
+SetConsoleTitle  . . . . . . . .	Text   	 SetConsoleTitleA
+TAB  . . . . . . . . . . . . . .	Number	 00000009h   
+TRUE . . . . . . . . . . . . . .	Number	 00000001h   
+TRUNCATE_EXISTING  . . . . . . .	Number	 00000005h   
+VK_11  . . . . . . . . . . . . .	Number	 000000BDh   
+VK_12  . . . . . . . . . . . . .	Number	 000000BBh   
+VK_ADD . . . . . . . . . . . . .	Number	 0000006Bh   
+VK_BACK  . . . . . . . . . . . .	Number	 00000008h   
+VK_CANCEL  . . . . . . . . . . .	Number	 00000003h   
+VK_CAPITAL . . . . . . . . . . .	Number	 00000014h   
+VK_CLEAR . . . . . . . . . . . .	Number	 0000000Ch   
+VK_CONTROL . . . . . . . . . . .	Number	 00000011h   
+VK_DECIMAL . . . . . . . . . . .	Number	 0000006Eh   
+VK_DELETE  . . . . . . . . . . .	Number	 0000002Eh   
+VK_DIVIDE  . . . . . . . . . . .	Number	 0000006Fh   
+VK_DOWN  . . . . . . . . . . . .	Number	 00000028h   
+VK_END . . . . . . . . . . . . .	Number	 00000023h   
+VK_ESCAPE  . . . . . . . . . . .	Number	 0000001Bh   
+VK_EXECUTE . . . . . . . . . . .	Number	 0000002Bh   
+VK_F10 . . . . . . . . . . . . .	Number	 00000079h   
+VK_F11 . . . . . . . . . . . . .	Number	 0000007Ah   
+VK_F12 . . . . . . . . . . . . .	Number	 0000007Bh   
+VK_F13 . . . . . . . . . . . . .	Number	 0000007Ch   
+VK_F14 . . . . . . . . . . . . .	Number	 0000007Dh   
+VK_F15 . . . . . . . . . . . . .	Number	 0000007Eh   
+VK_F16 . . . . . . . . . . . . .	Number	 0000007Fh   
+VK_F17 . . . . . . . . . . . . .	Number	 00000080h   
+VK_F18 . . . . . . . . . . . . .	Number	 00000081h   
+VK_F19 . . . . . . . . . . . . .	Number	 00000082h   
+VK_F1  . . . . . . . . . . . . .	Number	 00000070h   
+VK_F20 . . . . . . . . . . . . .	Number	 00000083h   
+VK_F21 . . . . . . . . . . . . .	Number	 00000084h   
+VK_F22 . . . . . . . . . . . . .	Number	 00000085h   
+VK_F23 . . . . . . . . . . . . .	Number	 00000086h   
+VK_F24 . . . . . . . . . . . . .	Number	 00000087h   
+VK_F2  . . . . . . . . . . . . .	Number	 00000071h   
+VK_F3  . . . . . . . . . . . . .	Number	 00000072h   
+VK_F4  . . . . . . . . . . . . .	Number	 00000073h   
+VK_F5  . . . . . . . . . . . . .	Number	 00000074h   
+VK_F6  . . . . . . . . . . . . .	Number	 00000075h   
+VK_F7  . . . . . . . . . . . . .	Number	 00000076h   
+VK_F8  . . . . . . . . . . . . .	Number	 00000077h   
+VK_F9  . . . . . . . . . . . . .	Number	 00000078h   
+VK_HELP  . . . . . . . . . . . .	Number	 0000002Fh   
+VK_HOME  . . . . . . . . . . . .	Number	 00000024h   
+VK_INSERT  . . . . . . . . . . .	Number	 0000002Dh   
+VK_LBUTTON . . . . . . . . . . .	Number	 00000001h   
+VK_LCONTROL  . . . . . . . . . .	Number	 000000A2h   
+VK_LEFT  . . . . . . . . . . . .	Number	 00000025h   
+VK_LMENU . . . . . . . . . . . .	Number	 000000A4h   
+VK_LSHIFT  . . . . . . . . . . .	Number	 000000A0h   
+VK_MENU  . . . . . . . . . . . .	Number	 00000012h   
+VK_MULTIPLY  . . . . . . . . . .	Number	 0000006Ah   
+VK_NEXT  . . . . . . . . . . . .	Number	 00000022h   
+VK_NUMLOCK . . . . . . . . . . .	Number	 00000090h   
+VK_NUMPAD0 . . . . . . . . . . .	Number	 00000060h   
+VK_NUMPAD1 . . . . . . . . . . .	Number	 00000061h   
+VK_NUMPAD2 . . . . . . . . . . .	Number	 00000062h   
+VK_NUMPAD3 . . . . . . . . . . .	Number	 00000063h   
+VK_NUMPAD4 . . . . . . . . . . .	Number	 00000064h   
+VK_NUMPAD5 . . . . . . . . . . .	Number	 00000065h   
+VK_NUMPAD6 . . . . . . . . . . .	Number	 00000066h   
+VK_NUMPAD7 . . . . . . . . . . .	Number	 00000067h   
+VK_NUMPAD8 . . . . . . . . . . .	Number	 00000068h   
+VK_NUMPAD9 . . . . . . . . . . .	Number	 00000069h   
+VK_PAUSE . . . . . . . . . . . .	Number	 00000013h   
+VK_PRINT . . . . . . . . . . . .	Number	 0000002Ah   
+VK_PRIOR . . . . . . . . . . . .	Number	 00000021h   
+VK_RBUTTON . . . . . . . . . . .	Number	 00000002h   
+VK_RCONTROL  . . . . . . . . . .	Number	 000000A3h   
+VK_RETURN  . . . . . . . . . . .	Number	 0000000Dh   
+VK_RIGHT . . . . . . . . . . . .	Number	 00000027h   
+VK_RMENU . . . . . . . . . . . .	Number	 000000A5h   
+VK_RSHIFT  . . . . . . . . . . .	Number	 000000A1h   
+VK_SCROLL  . . . . . . . . . . .	Number	 00000091h   
+VK_SEPARATER . . . . . . . . . .	Number	 0000006Ch   
+VK_SHIFT . . . . . . . . . . . .	Number	 00000010h   
+VK_SNAPSHOT  . . . . . . . . . .	Number	 0000002Ch   
+VK_SPACE . . . . . . . . . . . .	Number	 00000020h   
+VK_SUBTRACT  . . . . . . . . . .	Number	 0000006Dh   
+VK_TAB . . . . . . . . . . . . .	Number	 00000009h   
+VK_UP  . . . . . . . . . . . . .	Number	 00000026h   
+WINDOW_BUFFER_SIZE_EVENT . . . .	Number	 00000004h   
+WINMM_INC  . . . . . . . . . . .	Text   	 1
+WriteConsoleOutputCharacter  . .	Text   	 WriteConsoleOutputCharacterA
+WriteConsole . . . . . . . . . .	Text   	 WriteConsoleA
+auxGetDevCaps  . . . . . . . . .	Text   	 auxGetDevCapsA
+black  . . . . . . . . . . . . .	Number	 00000000h   
+blue . . . . . . . . . . . . . .	Number	 00000001h   
+boolEnd  . . . . . . . . . . . .	Byte	 00000014 _DATA	
+brown  . . . . . . . . . . . . .	Number	 00000006h   
+buffer . . . . . . . . . . . . .	Byte	 00001DE9 _DATA	
+bytesWritten . . . . . . . . . .	DWord	 00000008 _DATA	
+cellsWritten . . . . . . . . . .	DWord	 00000004 _DATA	
+closestage_cd  . . . . . . . . .	Byte	 00001DBF _DATA	
+consoleHandle  . . . . . . . . .	DWord	 00000000 _DATA	
+cyan . . . . . . . . . . . . . .	Number	 00000003h   
+exit . . . . . . . . . . . . . .	Text   	 INVOKE ExitProcess,0
+game1@0  . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
+gray . . . . . . . . . . . . . .	Number	 00000008h   
+green  . . . . . . . . . . . . .	Number	 00000002h   
+joyGetDevCaps  . . . . . . . . .	Text   	 joyGetDevCapsA
+levelNum . . . . . . . . . . . .	Byte	 00000000 FLAT	External STDCALL
+level_choose . . . . . . . . . .	Byte	 00001D48 _DATA	
+level_switch . . . . . . . . . .	Byte	 00001D37 _DATA	
+lightBlue  . . . . . . . . . . .	Number	 00000009h   
+lightCyan  . . . . . . . . . . .	Number	 0000000Bh   
+lightGray  . . . . . . . . . . .	Number	 00000007h   
+lightGreen . . . . . . . . . . .	Number	 0000000Ah   
+lightMagenta . . . . . . . . . .	Number	 0000000Dh   
+lightRed . . . . . . . . . . . .	Number	 0000000Ch   
+magenta  . . . . . . . . . . . .	Number	 00000005h   
+main@0 . . . . . . . . . . . . .	L Near	 00000000 FLAT	External STDCALL
+mciGetDeviceIDFromElementID  . .	Text   	 mciGetDeviceIDFromElementIDA
+mciGetDeviceID . . . . . . . . .	Text   	 mciGetDeviceIDA
+mciGetErrorString  . . . . . . .	Text   	 mciGetErrorStringA
+mciSendCommand . . . . . . . . .	Text   	 mciSendCommandA
+mciSendString  . . . . . . . . .	Text   	 mciSendStringA
+midiInGetDevCaps . . . . . . . .	Text   	 midiInGetDevCapsA
+midiInGetErrorText . . . . . . .	Text   	 midiInGetErrorTextA
+midiOutGetDevCaps  . . . . . . .	Text   	 midiOutGetDevCapsA
+midiOutGetErrorText  . . . . . .	Text   	 midiOutGetErrorTextA
+mixerGetControlDetails . . . . .	Text   	 mixerGetControlDetailsA
+mixerGetDevCaps  . . . . . . . .	Text   	 mixerGetDevCapsA
+mixerGetLineControls . . . . . .	Text   	 mixerGetLineControlsA
+mixerGetLineInfo . . . . . . . .	Text   	 mixerGetLineInfoA
+mmioInstallIOProc  . . . . . . .	Text   	 mmioInstallIOProcA
+mmioOpen . . . . . . . . . . . .	Text   	 mmioOpenA
+mmioRename . . . . . . . . . . .	Text   	 mmioRenameA
+mmioStringToFOURCC . . . . . . .	Text   	 mmioStringToFOURCCA
+playstage_cd . . . . . . . . . .	Byte	 00001D9D _DATA	
+red  . . . . . . . . . . . . . .	Number	 00000004h   
+selectbool . . . . . . . . . . .	Byte	 00001D25 _DATA	
+selectstage  . . . . . . . . . .	Byte	 00001D26 _DATA	
+sndPlaySound . . . . . . . . . .	Text   	 sndPlaySoundA
+stage1row10Pos . . . . . . . . .	COORD	 00000E46 _DATA	
+stage1row10  . . . . . . . . . .	Byte	 0000044D _DATA	
+stage1row11Pos . . . . . . . . .	COORD	 00000E4A _DATA	
+stage1row11  . . . . . . . . . .	Byte	 000004C5 _DATA	
+stage1row12Pos . . . . . . . . .	COORD	 00000E4E _DATA	
+stage1row12  . . . . . . . . . .	Byte	 0000053D _DATA	
+stage1row13Pos . . . . . . . . .	COORD	 00000E52 _DATA	
+stage1row13  . . . . . . . . . .	Byte	 000005B5 _DATA	
+stage1row14Pos . . . . . . . . .	COORD	 00000E56 _DATA	
+stage1row14  . . . . . . . . . .	Byte	 0000062D _DATA	
+stage1row15Pos . . . . . . . . .	COORD	 00000E5A _DATA	
+stage1row15  . . . . . . . . . .	Byte	 000006A5 _DATA	
+stage1row16Pos . . . . . . . . .	COORD	 00000E5E _DATA	
+stage1row16  . . . . . . . . . .	Byte	 0000071D _DATA	
+stage1row17Pos . . . . . . . . .	COORD	 00000E62 _DATA	
+stage1row17  . . . . . . . . . .	Byte	 00000795 _DATA	
+stage1row18Pos . . . . . . . . .	COORD	 00000E66 _DATA	
+stage1row18  . . . . . . . . . .	Byte	 0000080D _DATA	
+stage1row19Pos . . . . . . . . .	COORD	 00000E6A _DATA	
+stage1row19  . . . . . . . . . .	Byte	 00000885 _DATA	
+stage1row1Pos  . . . . . . . . .	COORD	 00000E22 _DATA	
+stage1row1 . . . . . . . . . . .	Byte	 00000015 _DATA	
+stage1row20Pos . . . . . . . . .	COORD	 00000E6E _DATA	
+stage1row20  . . . . . . . . . .	Byte	 000008FA _DATA	
+stage1row21Pos . . . . . . . . .	COORD	 00000E72 _DATA	
+stage1row21  . . . . . . . . . .	Byte	 00000972 _DATA	
+stage1row22Pos . . . . . . . . .	COORD	 00000E76 _DATA	
+stage1row22  . . . . . . . . . .	Byte	 000009EA _DATA	
+stage1row23Pos . . . . . . . . .	COORD	 00000E7A _DATA	
+stage1row23  . . . . . . . . . .	Byte	 00000A62 _DATA	
+stage1row24Pos . . . . . . . . .	COORD	 00000E7E _DATA	
+stage1row24  . . . . . . . . . .	Byte	 00000ADA _DATA	
+stage1row25Pos . . . . . . . . .	COORD	 00000E82 _DATA	
+stage1row25  . . . . . . . . . .	Byte	 00000B52 _DATA	
+stage1row26Pos . . . . . . . . .	COORD	 00000E86 _DATA	
+stage1row26  . . . . . . . . . .	Byte	 00000BCA _DATA	
+stage1row27Pos . . . . . . . . .	COORD	 00000E8A _DATA	
+stage1row27  . . . . . . . . . .	Byte	 00000C42 _DATA	
+stage1row28Pos . . . . . . . . .	COORD	 00000E8E _DATA	
+stage1row28  . . . . . . . . . .	Byte	 00000CBA _DATA	
+stage1row29Pos . . . . . . . . .	COORD	 00000E92 _DATA	
+stage1row29  . . . . . . . . . .	Byte	 00000D32 _DATA	
+stage1row2Pos  . . . . . . . . .	COORD	 00000E26 _DATA	
+stage1row2 . . . . . . . . . . .	Byte	 0000008D _DATA	
+stage1row30Pos . . . . . . . . .	COORD	 00000E96 _DATA	
+stage1row30  . . . . . . . . . .	Byte	 00000DAA _DATA	
+stage1row3Pos  . . . . . . . . .	COORD	 00000E2A _DATA	
+stage1row3 . . . . . . . . . . .	Byte	 00000105 _DATA	
+stage1row4Pos  . . . . . . . . .	COORD	 00000E2E _DATA	
+stage1row4 . . . . . . . . . . .	Byte	 0000017D _DATA	
+stage1row5Pos  . . . . . . . . .	COORD	 00000E32 _DATA	
+stage1row5 . . . . . . . . . . .	Byte	 000001F5 _DATA	
+stage1row6Pos  . . . . . . . . .	COORD	 00000E36 _DATA	
+stage1row6 . . . . . . . . . . .	Byte	 0000026D _DATA	
+stage1row7Pos  . . . . . . . . .	COORD	 00000E3A _DATA	
+stage1row7 . . . . . . . . . . .	Byte	 000002E5 _DATA	
+stage1row8Pos  . . . . . . . . .	COORD	 00000E3E _DATA	
+stage1row8 . . . . . . . . . . .	Byte	 0000035D _DATA	
+stage1row9Pos  . . . . . . . . .	COORD	 00000E42 _DATA	
+stage1row9 . . . . . . . . . . .	Byte	 000003D5 _DATA	
+stage1rowLength  . . . . . . . .	Byte	 00001D1F _DATA	
+stage1rowOffset  . . . . . . . .	DWord	 00001D21 _DATA	
+stage2row10Pos . . . . . . . . .	COORD	 00001CCB _DATA	
+stage2row10  . . . . . . . . . .	Byte	 000012D2 _DATA	
+stage2row11Pos . . . . . . . . .	COORD	 00001CCF _DATA	
+stage2row11  . . . . . . . . . .	Byte	 0000134A _DATA	
+stage2row12Pos . . . . . . . . .	COORD	 00001CD3 _DATA	
+stage2row12  . . . . . . . . . .	Byte	 000013C2 _DATA	
+stage2row13Pos . . . . . . . . .	COORD	 00001CD7 _DATA	
+stage2row13  . . . . . . . . . .	Byte	 0000143A _DATA	
+stage2row14Pos . . . . . . . . .	COORD	 00001CDB _DATA	
+stage2row14  . . . . . . . . . .	Byte	 000014B2 _DATA	
+stage2row15Pos . . . . . . . . .	COORD	 00001CDF _DATA	
+stage2row15  . . . . . . . . . .	Byte	 0000152A _DATA	
+stage2row16Pos . . . . . . . . .	COORD	 00001CE3 _DATA	
+stage2row16  . . . . . . . . . .	Byte	 000015A2 _DATA	
+stage2row17Pos . . . . . . . . .	COORD	 00001CE7 _DATA	
+stage2row17  . . . . . . . . . .	Byte	 0000161A _DATA	
+stage2row18Pos . . . . . . . . .	COORD	 00001CEB _DATA	
+stage2row18  . . . . . . . . . .	Byte	 00001692 _DATA	
+stage2row19Pos . . . . . . . . .	COORD	 00001CEF _DATA	
+stage2row19  . . . . . . . . . .	Byte	 0000170A _DATA	
+stage2row1Pos  . . . . . . . . .	COORD	 00001CA7 _DATA	
+stage2row1 . . . . . . . . . . .	Byte	 00000E9A _DATA	
+stage2row20Pos . . . . . . . . .	COORD	 00001CF3 _DATA	
+stage2row20  . . . . . . . . . .	Byte	 0000177F _DATA	
+stage2row21Pos . . . . . . . . .	COORD	 00001CF7 _DATA	
+stage2row21  . . . . . . . . . .	Byte	 000017F7 _DATA	
+stage2row22Pos . . . . . . . . .	COORD	 00001CFB _DATA	
+stage2row22  . . . . . . . . . .	Byte	 0000186F _DATA	
+stage2row23Pos . . . . . . . . .	COORD	 00001CFF _DATA	
+stage2row23  . . . . . . . . . .	Byte	 000018E7 _DATA	
+stage2row24Pos . . . . . . . . .	COORD	 00001D03 _DATA	
+stage2row24  . . . . . . . . . .	Byte	 0000195F _DATA	
+stage2row25Pos . . . . . . . . .	COORD	 00001D07 _DATA	
+stage2row25  . . . . . . . . . .	Byte	 000019D7 _DATA	
+stage2row26Pos . . . . . . . . .	COORD	 00001D0B _DATA	
+stage2row26  . . . . . . . . . .	Byte	 00001A4F _DATA	
+stage2row27Pos . . . . . . . . .	COORD	 00001D0F _DATA	
+stage2row27  . . . . . . . . . .	Byte	 00001AC7 _DATA	
+stage2row28Pos . . . . . . . . .	COORD	 00001D13 _DATA	
+stage2row28  . . . . . . . . . .	Byte	 00001B3F _DATA	
+stage2row29Pos . . . . . . . . .	COORD	 00001D17 _DATA	
+stage2row29  . . . . . . . . . .	Byte	 00001BB7 _DATA	
+stage2row2Pos  . . . . . . . . .	COORD	 00001CAB _DATA	
+stage2row2 . . . . . . . . . . .	Byte	 00000F12 _DATA	
+stage2row30Pos . . . . . . . . .	COORD	 00001D1B _DATA	
+stage2row30  . . . . . . . . . .	Byte	 00001C2F _DATA	
+stage2row3Pos  . . . . . . . . .	COORD	 00001CAF _DATA	
+stage2row3 . . . . . . . . . . .	Byte	 00000F8A _DATA	
+stage2row4Pos  . . . . . . . . .	COORD	 00001CB3 _DATA	
+stage2row4 . . . . . . . . . . .	Byte	 00001002 _DATA	
+stage2row5Pos  . . . . . . . . .	COORD	 00001CB7 _DATA	
+stage2row5 . . . . . . . . . . .	Byte	 0000107A _DATA	
+stage2row6Pos  . . . . . . . . .	COORD	 00001CBB _DATA	
+stage2row6 . . . . . . . . . . .	Byte	 000010F2 _DATA	
+stage2row7Pos  . . . . . . . . .	COORD	 00001CBF _DATA	
+stage2row7 . . . . . . . . . . .	Byte	 0000116A _DATA	
+stage2row8Pos  . . . . . . . . .	COORD	 00001CC3 _DATA	
+stage2row8 . . . . . . . . . . .	Byte	 000011E2 _DATA	
+stage2row9Pos  . . . . . . . . .	COORD	 00001CC7 _DATA	
+stage2row9 . . . . . . . . . . .	Byte	 0000125A _DATA	
+stage2rowLength  . . . . . . . .	Byte	 00001D20 _DATA	
+stage_cd . . . . . . . . . . . .	Byte	 00001D59 _DATA	
+statusBuffer . . . . . . . . . .	Byte	 00001E69 _DATA	
+statusstage_cd . . . . . . . . .	Byte	 00001DD1 _DATA	
+stopstage_cd . . . . . . . . . .	Byte	 00001DAE _DATA	
+waveInGetDevCaps . . . . . . . .	Text   	 waveInGetDevCapsA
+waveInGetErrorText . . . . . . .	Text   	 waveInGetErrorTextA
+waveOutGetDevCaps  . . . . . . .	Text   	 waveOutGetDevCapsA
+waveOutGetErrorText  . . . . . .	Text   	 waveOutGetErrorTextA
+white  . . . . . . . . . . . . .	Number	 0000000Fh   
+wsprintf . . . . . . . . . . . .	Text   	 wsprintfA
+yellow . . . . . . . . . . . . .	Number	 0000000Eh   
+
+	   0 Warnings
+	   0 Errors
